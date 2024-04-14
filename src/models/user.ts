@@ -9,6 +9,7 @@ interface IUser {
 	profile_img: string;
    cloudinary_id: string;
 	date_joined: Date;
+   access: boolean;
 }
 
 const UserSchema = new Schema({
@@ -17,6 +18,7 @@ const UserSchema = new Schema({
 	profile_img: String,
 	cloudinary_id: String,
 	date_joined: { type: Date, default: Date.now, required: true },
+   access: {type: Boolean, default: false, required: true},
 })
 
 UserSchema.virtual('url').get(function(this: IUser) {

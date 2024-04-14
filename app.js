@@ -3,10 +3,12 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+const jwt = require('jsonwebtoken')
 
 var indexRouter = require('./src/routes/index');
-var usersRouter = require('./src/routes/users');
+var authRouter = require('./src/routes/auth');
 
+// initialize app with express
 var app = express();
 
 // view engine setup
@@ -19,8 +21,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// setting routes
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/auth', authRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

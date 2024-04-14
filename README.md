@@ -1,7 +1,10 @@
-### Project: Blob API
+### Project: BLOG API
 
-# BEACON BLOGGER API
+# Lighthouse Chronicles API
+Life is a beautiful mix of distractions, occasional depressions, and joyful moments. For all its worth, we offer gain to learn and hear stories those before us and with us now. Join me as I seek to collect insights from all walks of lives while I try to make sense of my own. 🧳
+
 This project is a current work in progress  ⚠️
+
 
 ## Installation Guide ⚙️
 ### Development
@@ -21,6 +24,7 @@ npm install node-sass-middleware <might not need this anymore bc of script in pa
 npm install express sass
 npm install bcryptjs
 npm install luxon (IF TYPESCRIPT: npm install --save @types/luxon)
+npm install express jsonwebtoken
 ```
 
 > Reminder to check app.js for all added changes 

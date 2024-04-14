@@ -12,6 +12,7 @@ interface IBlog {
    cloudinary_id: String;
    author: string;
    comments: String[];
+   published: boolean;
 }
 
 const BlogSchema = new Schema({
@@ -24,6 +25,7 @@ const BlogSchema = new Schema({
    cloudinary_id: String,
    author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
    comments: [{ type: String, ref: 'Comment' }],
+   published: {type: Boolean, default: false, required: true},
 })
 
 BlogSchema.virtual('url').get(function(this: IBlog) {
