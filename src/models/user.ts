@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import {DateTime} from "luxon";
 
-interface IUser {
+export interface IUser {
    _id: any;
 	username: string;
 	email: string;

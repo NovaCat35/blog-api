@@ -3,7 +3,6 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const jwt = require('jsonwebtoken')
 
 var indexRouter = require('./src/routes/index');
 var authRouter = require('./src/routes/auth');
@@ -21,7 +20,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// setting routes
+// Routes
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
 
@@ -29,6 +28,19 @@ app.use('/auth', authRouter);
 app.use(function(req, res, next) {
   next(createError(404));
 });
+
+// Connect to Mongoose
+const mongoose = require("mongoose");
+mongoose.set("strictQuery", false);
+const dev_db_url = process.env.MONGODB_DEV_URL;
+const mongoDB = process.env.MONGODB_URL || dev_db_url;
+main().catch((err) => console.log(err));
+async function main() {
+	await mongoose.connect(mongoDB);
+}
+
+//passport stuff
+app.use(passport.initialize());
 
 // error handler
 app.use(function(err, req, res, next) {
