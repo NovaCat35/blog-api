@@ -23,8 +23,7 @@ function verifyToken(req: AuthRequest, res: Response, next: NextFunction) {
 		next();
 	} else {
 		// Forbidden
-		// res.sendStatus(403);
-      res.json({what:'the'})
+		res.sendStatus(403);
 	}
 }
 

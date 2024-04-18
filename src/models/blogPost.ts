@@ -18,7 +18,7 @@ interface IBlog {
 const BlogSchema = new Schema({
 	tags: [{ type: String }],
    read_time: { type: Number, required: true },
-   date_created: { type: Date, default: Date.now, required: true },
+   date_posted: { type: Date, default: Date.now, required: true },
 	title: { type: String, required: true },
 	texts: { type: String, required: true },
 	blog_img: String,

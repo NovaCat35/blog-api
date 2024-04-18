@@ -15,6 +15,7 @@ export interface IUser {
 const UserSchema = new Schema({
 	username: { type: String, required: true },
    password: {type: String, required: true},
+	email: {type: String, required: true},
 	profile_img: String,
 	cloudinary_id: String,
 	date_joined: { type: Date, default: Date.now, required: true },
