@@ -31,8 +31,8 @@ router.post('/post', verifyToken, post_controller.create_post);
 // // Protected route for deleting comment
 // router.delete('/comments', verifyToken, post_controller.delete_comment)
 
-// // Protected route for viewing all users (only available for admin)
-// router.post('/users', verifyToken, user_controller.show_all_users); 
+// Protected route for viewing all users (only available for admin)
+router.get('/users', verifyToken, user_controller.show_all_users); 
 
 
 module.exports = router;

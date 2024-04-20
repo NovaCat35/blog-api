@@ -31,19 +31,19 @@ exports.get_personal_profile = [
 	}),
 ];
 
-// exports.show_all_users = [
-// 	passport.authenticate("jwt", { session: false }),
+exports.show_all_users = [
+	passport.authenticate("jwt", { session: false }),
 
-// 	asyncHandler(async (req: any, res: Response, next: NextFunction) => {
-// 		if (!req.user || !req.user.admin_access) {
-// 			return res.status(403).json({ error: "Unauthorized: Admin access required." });
-// 		}
-// 		const users = await User.find().sort({ username: 1 }).exec();
-// 		res.json({
-// 			users,
-// 		});
-// 	}),
-// ];
+	asyncHandler(async (req: any, res: Response, next: NextFunction) => {
+		if (!req.user || !req.user.admin_access) {
+			return res.status(403).json({ error: "Unauthorized: Admin access required." });
+		}
+		const users = await User.find().sort({ username: 1 }).exec();
+		res.json({
+			users,
+		});
+	}),
+];
 
 exports.get_user_profile = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
 	const [user, posts, comments] = await Promise.all([User.findById(req.params.id).exec(), Blog.find({ username: req.params.id }).sort({ date_posted: 1 }).exec(), Comment.find({ username: req.params.id }).sort({ date_posted: 1 }).exec()]);
