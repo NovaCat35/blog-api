@@ -1,10 +1,9 @@
 const LocalStrategy = require("passport-local").Strategy;
-const jwtStrategy = require("./strategies/jwt");
+var JwtStrategy = require("passport-jwt").Strategy;
 const passport = require("passport");
 const User = require("../models/user");
 const { IUser } = require("../models/user");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const ExtractJwt = require("passport-jwt").ExtractJwt;
 
 type DoneFunction = (err: Error | null, user?: any | false, info?: any) => void;
@@ -34,11 +33,11 @@ opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = process.env.SECRET_KEY;
 
 passport.use(
-	new jwtStrategy(opts, async (jwt_payload: { user: typeof IUser }, done: DoneFunction) => {
+	new JwtStrategy(opts, async (jwt_payload: { user: typeof IUser }, done: DoneFunction) => {
 		try {
 			const user = await User.findOne({ username: jwt_payload.user.username });
 			if (user) {
-				return done(null, true);
+				return done(null, user);
 			} else {
 				return done(null, false);
 			}

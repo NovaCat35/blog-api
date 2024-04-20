@@ -11,7 +11,7 @@ var authRouter = require('./src/routes/auth');
 var app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, 'src/views'));
 app.set('view engine', 'ejs');
 
 app.use(logger('dev'));
@@ -29,6 +29,11 @@ app.use(function(req, res, next) {
   next(createError(404));
 });
 
+// Check if dev or production in order to use .env file
+if (process.env.NODE_ENV !== "production") {
+	require("dotenv").config();
+}
+
 // Connect to Mongoose
 const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
@@ -40,6 +45,8 @@ async function main() {
 }
 
 //passport stuff
+require('./src/functions/passportStrats')
+const passport = require("passport");
 app.use(passport.initialize());
 
 // error handler

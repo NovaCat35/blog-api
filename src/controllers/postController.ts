@@ -4,6 +4,7 @@ const Comment = require("../models/comment");
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 import { AuthRequest } from "../functions/verifyToken";
+const passport = require("passport");
 
 /**
  * Controller for everything blog related (blog posts, & comments)
@@ -24,23 +25,36 @@ exports.get_post = asyncHandler(async (req: Request, res: Response, next: NextFu
 	});
 });
 
-exports.create_post = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
-	jwt.verify(req.token, `${process.env.SECRET_KEY}`, (err: Error, authData: any) => {
+// exports.create_post = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+//    passport.authenticate("jwt", { session: false }),
+
+//    jwt.verify(req.token, `${process.env.SECRET_KEY}`, (err: Error, authData: any) => {
+// 		console.log(`this is token: ${req.token}`);
+// 		if (err) {
+// 			res.sendStatus(403);
+// 		} else {
+// 			res.json({
+// 				message: "Blog post created...",
+// 				authData,
+// 			});
+// 		}
+// 	});
+// });
+exports.create_post = [
+	passport.authenticate("jwt", { session: false }),
+
+	asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
 		console.log(`this is token: ${req.token}`);
-		if (err) {
-			res.sendStatus(403);
-		} else {
-			res.json({
-				message: "Blog post created...",
-				authData,
-			});
-		}
-	});
-});
 
-exports.delete_post = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {});
+		res.json({
+			message: "Blog post created...",
+		});
+	}),
+];
 
-exports.comments_get = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+// exports.delete_post = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {});
+
+exports.get_comment = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
 	const comments = await Comment.find().populate("author").sort({ date_posted: -1 }).exec();
 
 	res.json({
@@ -48,6 +62,6 @@ exports.comments_get = asyncHandler(async (req: AuthRequest, res: Response, next
 	});
 });
 
-exports.create_comment = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {});
+// exports.create_comment = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {});
 
-exports.delete_comment = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {});
+// exports.delete_comment = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {});

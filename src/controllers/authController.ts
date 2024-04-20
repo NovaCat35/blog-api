@@ -1,21 +1,23 @@
 import { Request, Response, NextFunction } from "express";
+const bcrypt = require("bcryptjs");
+const User = require("../models/user");
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
-import { IUser } from "../models/user";
 const { body, validationResult } = require("express-validator");
+const passport = require("passport");
 
 // SIGNUP route to generate JWT token
 exports.signup = [
 	// sanitize the body
-	body("username", "Username required").trim().notEmpty().escaped(),
-	body("email", "Invalid email").trim().notEmpty().escaped(),
-	body("password", "Invalid password").trim().notEmpty().escaped(),
-	body("password_confirmation", "Invalid password").trim().notEmpty().escaped(),
+	body("username", "Username required").trim().notEmpty().escape(),
+	body("email", "Invalid email").trim().notEmpty().escape(),
+	body("password", "Invalid password").trim().notEmpty().escape(),
+	body("password_confirm", "Invalid password").trim().notEmpty().escape(),
 
 	asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
 		const errors = validationResult(req);
 		const userExist = await User.findOne({ username: req.body.username });
-		const emailExist = await User.findOne({ username: req.body.email });
+		const emailExist = await User.findOne({ email: req.body.email });
 		let errorMessages = [];
 
 		// Check password confirmation
@@ -69,7 +71,7 @@ exports.signup = [
 // LOGIN route to generate JWT token
 exports.login = [
 	// Authenticate user login with local strategy if user exists.
-	passport.authenticate("local", { failureRedirect: "/login", failureMessage: true, successRedirect: "/" }),
+	passport.authenticate("local", { session: false, failureRedirect: "/login", failureMessage: true }),
 
 	asyncHandler(async (req: any, res: Response, next: NextFunction) => {
 		const user = req.user;
