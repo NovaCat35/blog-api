@@ -11,7 +11,7 @@ router.get("/posts", post_controller.get_all_posts);
 
 router.get("/posts/:id", post_controller.get_post);
 
-router.get('/comments', post_controller.get_comment);
+router.get('/comments', post_controller.get_all_comments);
 
 router.get('/users/:id', user_controller.get_user_profile);
 
@@ -20,13 +20,13 @@ router.get('/profile', verifyToken, user_controller.get_personal_profile);
 
 /* POSTING & DELETING: REQUIRES AUTHENTICATION */
 // Protected route for posting blog
-router.post('/post', verifyToken, post_controller.create_post);
+router.post('/posts', verifyToken, post_controller.create_post);
 
 // // Protected route for deleting blog 
-// router.delete('/posts', verifyToken, post_controller.delete_post)
+// router.delete('/posts/:id', verifyToken, post_controller.delete_post)
 
-// // Protected route for posting comment
-// router.post('/comments', verifyToken, post_controller.create_comment);
+// Protected route for posting comment
+router.post('/comments', verifyToken, post_controller.create_comment);
 
 // // Protected route for deleting comment
 // router.delete('/comments', verifyToken, post_controller.delete_comment)

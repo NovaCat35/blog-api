@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 import { DateTime } from "luxon";
 
 interface IComments {
-	username: String;
+	user: Schema.Types.ObjectId;
 	comment: String;
 	likes: number;
 	date_posted: Date;
@@ -10,7 +10,7 @@ interface IComments {
 }
 
 const CommentSchema = new Schema({
-	username: { type: Schema.Types.ObjectId, ref: "User", required: true },
+	user: { type: Schema.Types.ObjectId, ref: "User", required: true },
 	comment: { type: String, required: true },
 	likes: { type: Number, default: 0 },
 	date_posted: { type: Date, default: Date.now, required: true },

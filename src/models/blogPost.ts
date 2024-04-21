@@ -10,7 +10,7 @@ interface IBlog {
 	texts: String;
 	blog_img: String;
    cloudinary_id: String;
-   author: string;
+   author: Schema.Types.ObjectId;
    comments: String[];
    published: boolean;
 }

@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 const Blog = require("../models/blogPost");
 const Comment = require("../models/comment");
 const asyncHandler = require("express-async-handler");
-const jwt = require("jsonwebtoken");
+const { body, validationResult } = require("express-validator");
 import { AuthRequest } from "../functions/verifyToken";
 const passport = require("passport");
 
@@ -25,36 +25,53 @@ exports.get_post = asyncHandler(async (req: Request, res: Response, next: NextFu
 	});
 });
 
-// exports.create_post = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
-//    passport.authenticate("jwt", { session: false }),
-
-//    jwt.verify(req.token, `${process.env.SECRET_KEY}`, (err: Error, authData: any) => {
-// 		console.log(`this is token: ${req.token}`);
-// 		if (err) {
-// 			res.sendStatus(403);
-// 		} else {
-// 			res.json({
-// 				message: "Blog post created...",
-// 				authData,
-// 			});
-// 		}
-// 	});
-// });
 exports.create_post = [
 	passport.authenticate("jwt", { session: false }),
 
-	asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
-		console.log(`this is token: ${req.token}`);
+	// Sanitize body
+	body("tags").isArray().escape(),
+	body("read_time").isNumeric().toInt().escape(),
+	body("title").trim().escape(),
+	body("texts").trim().notEmpty().escape(),
+	body("blog_img").trim().escape(),
+	body("published").isBoolean().toBoolean(),
 
-		res.json({
-			message: "Blog post created...",
-		});
+	asyncHandler(async (req: any, res: Response, next: NextFunction) => {
+		console.log(`this is token: ${req.token}`);
+		const errors = validationResult(req);
+
+		if (!errors.isEmpty()) {
+			console.log(errors.array());
+			return res.status(400).json({ errors: "Invalid data provided." });
+		}
+
+		try {
+			const blog = new Blog({
+				tags: req.body.tags,
+				read_time: req.body.read_time,
+				title: req.body.title,
+				texts: req.body.texts,
+				blog_img: req.body.blog_img,
+				author: req.user,
+				published: req.body.published,
+			});
+
+			const savedBlog = await blog.save();
+
+			res.status(201).json({
+				message: "Blog post created successfully.",
+				blog: savedBlog,
+			});
+		} catch (error) {
+			console.error("Error creating blog post:", error);
+			res.status(500).json({ error: "Internal Server Error" });
+		}
 	}),
 ];
 
 // exports.delete_post = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {});
 
-exports.get_comment = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+exports.get_all_comments = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
 	const comments = await Comment.find().populate("author").sort({ date_posted: -1 }).exec();
 
 	res.json({
@@ -62,6 +79,39 @@ exports.get_comment = asyncHandler(async (req: AuthRequest, res: Response, next:
 	});
 });
 
-// exports.create_comment = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {});
+exports.create_comment = [
+   passport.authenticate("jwt", { session: false }),
+
+   // sanitize body
+   body("comment").trim().escape(),
+ 
+   asyncHandler(async (req: any, res: Response, next: NextFunction) => {
+     const errors = validationResult(req);
+ 
+     if (!errors.isEmpty()) {
+       console.log(errors.array());
+       return res.status(400).json({ errors: errors.array() });
+     }
+ 
+     try {
+      console.log(`HEYEYEYYEYE: ${req.user}`)
+       const comment = new Comment({
+         user: req.user,
+         comment: req.body.comment,
+       });
+ 
+       const createdComment = await comment.save();
+ 
+       res.status(201).json({
+         message: "Comment created successfully.",
+         comment: createdComment,
+       });
+     } catch (error) {
+       console.error("Error creating comment:", error);
+       return res.status(500).json({ error: "Internal Server Error" });
+     }
+   }),
+ ];
+ 
 
 // exports.delete_comment = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {});
