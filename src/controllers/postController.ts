@@ -69,7 +69,26 @@ exports.create_post = [
 	}),
 ];
 
-// exports.delete_post = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {});
+exports.delete_post = [
+   passport.authenticate("jwt", { session: false }),
+
+   asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+	const deletedBlog = await Blog.findByIdAndDelete(req.params.id).exec();
+
+	if (!deletedBlog) {
+		return res.status(404).json({ error: "Blog post not found" });
+	}
+
+	try {
+		// Additionally delete all dependent comments attached to the deleted blog
+		await Comment.deleteMany({ _id: { $in: deletedBlog.comments } }).exec();
+      
+		res.json({ message: "Blog post and related comments deleted successfully" });
+	} catch (error) {
+		console.error("Error deleting comments:", error);
+		res.status(500).json({ error: "Internal Server Error" });
+	}
+})]
 
 exports.get_all_comments = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
 	const comments = await Comment.find().populate("author").sort({ date_posted: -1 }).exec();
@@ -80,38 +99,50 @@ exports.get_all_comments = asyncHandler(async (req: AuthRequest, res: Response, 
 });
 
 exports.create_comment = [
+	passport.authenticate("jwt", { session: false }),
+
+	// sanitize body
+	body("blog_post").trim().escape(),
+	body("comment").trim().escape(),
+
+	asyncHandler(async (req: any, res: Response, next: NextFunction) => {
+		const errors = validationResult(req);
+
+		if (!errors.isEmpty()) {
+			console.log(errors.array());
+			return res.status(400).json({ errors: errors.array() });
+		}
+
+		try {
+			const comment = new Comment({
+				user: req.user,
+				blog_post: req.body.blog_post,
+				comment: req.body.comment,
+			});
+
+			const createdComment = await comment.save();
+			const updatedBlog = await Blog.findByIdAndUpdate(
+				req.body.blog_post,
+				{ $push: { comments: createdComment._id } }, // Push the new comment's ID to the comments array
+				{ new: true }
+			);
+
+			res.status(201).json({
+				message: "Comment created successfully.",
+				comment: createdComment,
+				updatedBlog: updatedBlog,
+			});
+		} catch (error) {
+			console.error("Error creating comment:", error);
+			return res.status(500).json({ error: "Internal Server Error" });
+		}
+	}),
+];
+
+exports.delete_comment = [
    passport.authenticate("jwt", { session: false }),
-
-   // sanitize body
-   body("comment").trim().escape(),
- 
-   asyncHandler(async (req: any, res: Response, next: NextFunction) => {
-     const errors = validationResult(req);
- 
-     if (!errors.isEmpty()) {
-       console.log(errors.array());
-       return res.status(400).json({ errors: errors.array() });
-     }
- 
-     try {
-      console.log(`HEYEYEYYEYE: ${req.user}`)
-       const comment = new Comment({
-         user: req.user,
-         comment: req.body.comment,
-       });
- 
-       const createdComment = await comment.save();
- 
-       res.status(201).json({
-         message: "Comment created successfully.",
-         comment: createdComment,
-       });
-     } catch (error) {
-       console.error("Error creating comment:", error);
-       return res.status(500).json({ error: "Internal Server Error" });
-     }
-   }),
- ];
- 
-
-// exports.delete_comment = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {});
+   
+   asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+	Comment.findByIdAndDelete(req.params.id).exec();
+	res.json({ message: "Comment deleted successfully" });
+})]

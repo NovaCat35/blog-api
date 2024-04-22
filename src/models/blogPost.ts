@@ -11,7 +11,7 @@ interface IBlog {
 	blog_img: String;
    cloudinary_id: String;
    author: Schema.Types.ObjectId;
-   comments: String[];
+   comments: Schema.Types.ObjectId[];
    published: boolean;
 }
 
@@ -24,7 +24,7 @@ const BlogSchema = new Schema({
 	blog_img: String,
    cloudinary_id: String,
    author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-   comments: [{ type: String, ref: 'Comment' }],
+   comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
    published: {type: Boolean, default: false, required: true},
 })
 

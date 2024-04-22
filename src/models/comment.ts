@@ -3,6 +3,7 @@ import { DateTime } from "luxon";
 
 interface IComments {
 	user: Schema.Types.ObjectId;
+	blog_post: Schema.Types.ObjectId;
 	comment: String;
 	likes: number;
 	date_posted: Date;
@@ -11,6 +12,7 @@ interface IComments {
 
 const CommentSchema = new Schema({
 	user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+	blog_post: { type: Schema.Types.ObjectId, ref: "Blog", required: true },
 	comment: { type: String, required: true },
 	likes: { type: Number, default: 0 },
 	date_posted: { type: Date, default: Date.now, required: true },
