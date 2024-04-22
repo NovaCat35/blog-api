@@ -7,8 +7,9 @@ Life is a beautiful mix of distractions, occasional depressions, and joyful mome
 This project is a current work in progress  ⚠️
 
 ## Challenges 🔥
+One significant challenge I encounter was setting up controller and routes. This challenge involved handling various HTTP methods, parsing request bodies, and validating authorization from headers while dealing with different responses. To address some of the issues with connection, I used postman to help correct some logic controller errors without having to create the entire client-side from scratch on local server. I also try to separate out the abstraction with authentication, passport logics, and validation in their respective files to help in maintaining clean and organized code for handling different API endpoints effectively.
 
-Currently having issue with figuring out how to navigate to protected routes by connecting client to backend using JWT. Using passport.authenticate('jwt') but there's issue with unable to compile TypeScript.
+Currently, another challenge is trying to connect both the client and server side with using fetch and JWT...
 
 ## Installation Guide ⚙️
 

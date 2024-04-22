@@ -22,6 +22,9 @@ router.get("/profile", verifyToken, user_controller.get_personal_profile);
 // Protected route for posting blog
 router.post("/posts", verifyToken, post_controller.create_post);
 
+// Protected route for editing blog
+router.put("/posts/:id", verifyToken, post_controller.edit_post);
+
 // Protected route for deleting blog
 router.delete("/posts/:id", verifyToken, post_controller.delete_post);
 
