@@ -5,7 +5,7 @@ interface IBlog {
    _id: any;
 	tags: String[];
    read_time: number;
-   date_created: Date;
+   date_posted: Date;
 	title: String;
 	texts: String;
 	blog_img: String;
@@ -33,7 +33,7 @@ BlogSchema.virtual('url').get(function(this: IBlog) {
 })
 
 BlogSchema.virtual("format_date").get(function (this: IBlog) {
-	return DateTime.fromJSDate(this.date_created).toFormat('MMMM dd, yyyy')	
+	return DateTime.fromJSDate(this.date_posted).toFormat('MMMM dd, yyyy')	
 });
 
 module.exports = mongoose.model('Blog', BlogSchema)

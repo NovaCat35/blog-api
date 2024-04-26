@@ -11,6 +11,8 @@ const passport = require("passport");
  */
 exports.get_all_posts = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
 	const blogPosts = await Blog.find().populate("author").sort({ date_posted: -1 }).exec();
+
+	// const postsWithVirtuals = blogPosts.map((post) => post.toJSON({ virtuals: true }));
 	res.json({
 		message: "Show all blog posts",
 		posts: blogPosts,

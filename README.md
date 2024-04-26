@@ -34,6 +34,7 @@ npm install bcryptjs
 npm install luxon (IF TYPESCRIPT: npm install --save @types/luxon)
 npm install express jsonwebtoken
 npm install passport-jwt
+npm install cors
 ```
 
 > Reminder to check app.js for all added changes
