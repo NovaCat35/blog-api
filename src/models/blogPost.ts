@@ -13,6 +13,7 @@ interface IBlog {
    author: Schema.Types.ObjectId;
    comments: Schema.Types.ObjectId[];
    published: boolean;
+   likes: Number;
 }
 
 const BlogSchema = new Schema({
@@ -26,6 +27,7 @@ const BlogSchema = new Schema({
    author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
    comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
    published: {type: Boolean, default: false, required: true},
+   likes: {type: Number, default: 0 },
 })
 
 BlogSchema.virtual('url').get(function(this: IBlog) {
