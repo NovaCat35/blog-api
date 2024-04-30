@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
+import { IUser } from "../models/user";
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const { body, validationResult } = require("express-validator");
@@ -69,18 +70,21 @@ exports.signup = [
 ];
 
 // LOGIN route to generate JWT token
-exports.login = [
+exports.login = asyncHandler(async (req: any, res: Response, next: NextFunction) => {
 	// Authenticate user login with local strategy if user exists.
-	passport.authenticate("local", { session: false, failureRedirect: "/login", failureMessage: true }),
-
-	asyncHandler(async (req: any, res: Response, next: NextFunction) => {
-		const user = req.user;
+	passport.authenticate("local", { session: false }, function (err: Error, user: IUser, info: any) {
+		if (err) {
+			return res.status(500).json({ error: "Internal Server Error" });
+		}
+		if (!user) {
+			return res.status(401).json({ error: info.message });
+		}
 
 		// Send token to client side (to be saved locally)
 		const token = jwt.sign({ user }, `${process.env.SECRET_KEY}`, { expiresIn: "1w" });
 		return res.json({ token, user });
-	}),
-];
+	})(req, res, next);
+});
 
 // LOGOUT route
 exports.logout = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
