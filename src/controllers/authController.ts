@@ -11,7 +11,7 @@ const passport = require("passport");
 exports.signup = [
 	// sanitize the body
 	body("username", "Username required").trim().notEmpty().escape(),
-	body("email", "Invalid email").trim().notEmpty().escape(),
+	body("email", "Invalid email").trim().notEmpty().isEmail().escape(),
 	body("password", "Invalid password").trim().notEmpty().escape(),
 	body("password_confirm", "Invalid password").trim().notEmpty().escape(),
 
@@ -21,22 +21,26 @@ exports.signup = [
 		const emailExist = await User.findOne({ email: req.body.email });
 		let errorMessages = [];
 
-		// Check password confirmation
-		if (!errors.isEmpty() || req.body.password !== req.body.password_confirm) {
-			errorMessages.push("Passwords do not match, please try again.");
-		}
 		// Check if username already taken
 		if (userExist) {
-			errorMessages.push("Username taken, try another name.");
+			errorMessages.push("Username taken");
 		}
 		// Check if user's email already exist
 		if (emailExist) {
-			errorMessages.push("Email already registered. Try again.");
+			errorMessages.push("Email already registered");
+		}
+		// Check password confirmation
+		if (req.body.password !== req.body.password_confirm) {
+			errorMessages.push("Passwords does not match");
+		}
+
+		if(!errors.isEmpty()){
+			errorMessages.push("Please check formatting input formatting.");
 		}
 
 		// If we have any error message because of the above
 		if (errorMessages.length !== 0) {
-			return res.json({
+			return res.status(401).json({
 				username: req.body.username,
 				email: req.body.email,
 				errors: errors.array(),

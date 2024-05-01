@@ -1,19 +1,22 @@
-### Project: BLOG API
-
 # Wayfarer's Frontier (API)
 
 Life is a beautiful mix of distractions, occasional depressions, and joyful moments. For all its worth, we offer gain to learn and hear stories those before us and with us now. Join me as I seek to collect insights from all walks of lives while I try to make sense of my own. 🧳
 
 This project is a current work in progress  ⚠️
 
-## Content Links 🚀
+## Content Links 🌐
 
-- Live Demo: work in progress  ⚠️
+- Live Demo: work in progress
 - [Frontend Client](https://github.com/NovaCat35/blog-client)
 - Backend API _(You are here)_
 
-## Challenges 🔥
+## Technologies Used 🚀
+- **Backend:** Node.js, Express.js, TypeScript
+- **Stylesheet Language:** SCSS
+- **View Engine:** EJS
+- **Database:** MongoDB
 
+## Challenges 🔥
 One notable challenge I faced was setting up controllers and routes. This task involved managing various HTTP methods, parsing request bodies, and validating authorization through headers while handling diverse responses. To tackle connectivity issues and logic errors in controllers, I utilized Postman to debug and refine the logic without needing to fully develop the client-side on the local server. Additionally, I made efforts to maintain a clean and organized codebase by segregating authentication, Passport logic, and validation into separate files, which aided in effectively managing different API endpoints.
 
 Another challenge that emerged was during the process of connecting the client and server sides using fetch and JWT. Although Postman helped in testing route calls and logic, issues arose when implementing the client-side due to asynchronous login implementation, leading to error messages. I had to rewrite some logic to accompany earlier failed test with deliberate wrong authorization request.
