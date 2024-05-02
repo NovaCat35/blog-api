@@ -10,7 +10,7 @@ const passport = require("passport");
 // SIGNUP route to generate JWT token
 exports.signup = [
 	// sanitize the body
-	body("username", "Username required").trim().notEmpty().escape(),
+	body("username", "Username required").trim().notEmpty().isLength({ max: 50 }).escape(),
 	body("email", "Invalid email").trim().notEmpty().isEmail().escape(),
 	body("password", "Invalid password").trim().notEmpty().escape(),
 	body("password_confirm", "Invalid password").trim().notEmpty().escape(),
@@ -23,19 +23,23 @@ exports.signup = [
 
 		// Check if username already taken
 		if (userExist) {
-			errorMessages.push("Username taken");
+			errorMessages.push({errorType: 'username', errorMsg: "⚠️ Username taken."});
 		}
 		// Check if user's email already exist
 		if (emailExist) {
-			errorMessages.push("Email already registered");
+			errorMessages.push({errorType: 'email', errorMsg: "⚠️ Email already registered."});
 		}
 		// Check password confirmation
 		if (req.body.password !== req.body.password_confirm) {
-			errorMessages.push("Passwords does not match");
+			errorMessages.push({errorType: 'password', errorMsg: "⚠️ Passwords does not match."});
 		}
 
-		if(!errors.isEmpty()){
-			errorMessages.push("Please check formatting input formatting.");
+		// Push any fail validation msgs into errorMessages
+		if (!errors.isEmpty()) {
+			const validationErrors = errors.array() as { msg: string }[];
+			validationErrors.forEach((error) => {
+				errorMessages.push({errorType: 'other', errorMsg: error.msg});
+			});
 		}
 
 		// If we have any error message because of the above

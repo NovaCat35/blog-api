@@ -64,7 +64,7 @@ exports.create_post = [
 			});
 		} catch (error) {
 			console.error("Error creating blog post:", error);
-			res.status(500).json({ error: "Internal Server Error" });
+			res.status(500).json({ error: "Internal Server Error." });
 		}
 	}),
 ];
@@ -101,7 +101,7 @@ exports.edit_post = [
 			const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, updatedFields, { new: true }).exec();
 
 			if (!updatedBlog) {
-				return res.status(404).json({ error: "Blog post not found" });
+				return res.status(404).json({ error: "Blog post not found." });
 			}
 
 			res.status(201).json({
@@ -110,7 +110,7 @@ exports.edit_post = [
 			});
 		} catch (error) {
 			console.error("Error creating blog post:", error);
-			res.status(500).json({ error: "Internal Server Error" });
+			res.status(500).json({ error: "Internal Server Error." });
 		}
 	}),
 ];
@@ -122,14 +122,14 @@ exports.delete_post = [
 		const deletedBlog = await Blog.findByIdAndDelete(req.params.id).exec();
 
 		if (!deletedBlog) {
-			return res.status(404).json({ error: "Blog post not found" });
+			return res.status(404).json({ error: "Blog post not found." });
 		}
 
 		try {
 			// Additionally delete all dependent comments attached to the deleted blog
 			await Comment.deleteMany({ _id: { $in: deletedBlog.comments } }).exec();
 
-			res.json({ message: "Blog post and related comments deleted successfully" });
+			res.json({ message: "Blog post and related comments deleted successfully." });
 		} catch (error) {
 			console.error("Error deleting comments:", error);
 			res.status(500).json({ error: "Internal Server Error" });
