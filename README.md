@@ -2,7 +2,7 @@
 
 Life is a beautiful mix of distractions, occasional depressions, and joyful moments. For all its worth, we offer gain to learn and hear stories those before us and with us now. Join me as I seek to collect insights from all walks of lives while I try to make sense of my own. 
 
-This project is a current work in progress  ⚠️ 🧳
+This project is a current work in progress  ⚠️ 
 
 ## Content Links 🌐
 

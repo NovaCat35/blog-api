@@ -34,7 +34,9 @@ exports.create_post = [
 	body("read_time").isNumeric().toInt().escape(),
 	body("title").trim().escape(),
 	body("content").trim().notEmpty().escape(),
-	body("blog_img").trim().escape(),
+   body("blog_img.img_file").trim().escape(), 
+	body("blog_img.src.name").trim().escape(),
+	body("blog_img.src.link").trim().escape(),
 	body("published").isBoolean().toBoolean(),
 
 	asyncHandler(async (req: any, res: Response, next: NextFunction) => {
@@ -51,8 +53,14 @@ exports.create_post = [
 				read_time: req.body.read_time,
 				title: req.body.title,
 				content: req.body.content,
-				blog_img: req.body.blog_img,
-				author: req.user,
+				blog_img: {
+					img_id: req.body.blog_img.img_id, 
+					src: {
+						name: req.body.blog_img.src.name,
+						link: req.body.blog_img.src.link,
+					},
+				},				
+            author: req.user,
 				published: req.body.published,
 			});
 
@@ -77,7 +85,9 @@ exports.edit_post = [
 	body("read_time").isNumeric().toInt().escape(),
 	body("title").trim().escape(),
 	body("content").trim().notEmpty().escape(),
-	body("blog_img").trim().escape(),
+   body("blog_img.img_file").trim().escape(), 
+	body("blog_img.src.name").trim().escape(),
+	body("blog_img.src.link").trim().escape(),
 	body("published").isBoolean().toBoolean(),
 
 	asyncHandler(async (req: any, res: Response, next: NextFunction) => {
@@ -94,7 +104,13 @@ exports.edit_post = [
 				read_time: req.body.read_time,
 				title: req.body.title,
 				content: req.body.content,
-				blog_img: req.body.blog_img,
+				blog_img: {
+					img_id: req.body.blog_img.img_id, 
+					src: {
+						name: req.body.blog_img.src.name,
+						link: req.body.blog_img.src.link,
+					},
+				},		
 				published: req.body.published,
 			};
 

@@ -8,7 +8,13 @@ interface IBlog {
 	date_posted: Date;
 	title: String;
 	content: String;
-	blog_img: String;
+	blog_img: {
+		img_file: string;
+		src: {
+			name: string;
+			link: string;
+		};
+	};
 	cloudinary_id: String;
 	author: Schema.Types.ObjectId;
 	comments: Schema.Types.ObjectId[];
@@ -22,7 +28,13 @@ const BlogSchema = new Schema({
 	date_posted: { type: Date, default: Date.now, required: true },
 	title: { type: String, required: true },
 	content: { type: String, required: true },
-	blog_img: String,
+	blog_img: {
+		img_file: { type: String, default: "default", required: true },
+		src: {
+			name: { type: String, default: "unsplash", required: true },
+			link: { type: String, default: "https://unsplash.com/", required: true },
+		},
+	},
 	cloudinary_id: String,
 	author: { type: Schema.Types.ObjectId, ref: "User", required: true },
 	comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
@@ -32,6 +44,10 @@ const BlogSchema = new Schema({
 
 BlogSchema.virtual("url").get(function (this: IBlog) {
 	return `/blogs/${this._id}`;
+});
+
+BlogSchema.virtual("format_date").get(function (this: IBlog) {
+	return DateTime.fromJSDate(this.date_posted).toFormat("MMMM dd, yyyy");
 });
 
 BlogSchema.virtual("format_date").get(function (this: IBlog) {
