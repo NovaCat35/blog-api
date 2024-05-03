@@ -33,7 +33,7 @@ exports.create_post = [
 	body("tags").isArray().escape(),
 	body("read_time").isNumeric().toInt().escape(),
 	body("title").trim().escape(),
-	body("texts").trim().notEmpty().escape(),
+	body("content").trim().notEmpty().escape(),
 	body("blog_img").trim().escape(),
 	body("published").isBoolean().toBoolean(),
 
@@ -50,7 +50,7 @@ exports.create_post = [
 				tags: req.body.tags,
 				read_time: req.body.read_time,
 				title: req.body.title,
-				texts: req.body.texts,
+				content: req.body.content,
 				blog_img: req.body.blog_img,
 				author: req.user,
 				published: req.body.published,
@@ -76,7 +76,7 @@ exports.edit_post = [
 	body("tags").isArray().escape(),
 	body("read_time").isNumeric().toInt().escape(),
 	body("title").trim().escape(),
-	body("texts").trim().notEmpty().escape(),
+	body("content").trim().notEmpty().escape(),
 	body("blog_img").trim().escape(),
 	body("published").isBoolean().toBoolean(),
 
@@ -93,7 +93,7 @@ exports.edit_post = [
 				tags: req.body.tags,
 				read_time: req.body.read_time,
 				title: req.body.title,
-				texts: req.body.texts,
+				content: req.body.content,
 				blog_img: req.body.blog_img,
 				published: req.body.published,
 			};

@@ -7,7 +7,7 @@ interface IBlog {
 	read_time: number;
 	date_posted: Date;
 	title: String;
-	texts: String;
+	content: String;
 	blog_img: String;
 	cloudinary_id: String;
 	author: Schema.Types.ObjectId;
@@ -21,7 +21,7 @@ const BlogSchema = new Schema({
 	read_time: { type: Number, required: true },
 	date_posted: { type: Date, default: Date.now, required: true },
 	title: { type: String, required: true },
-	texts: { type: String, required: true },
+	content: { type: String, required: true },
 	blog_img: String,
 	cloudinary_id: String,
 	author: { type: Schema.Types.ObjectId, ref: "User", required: true },
