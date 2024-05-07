@@ -70,9 +70,12 @@ exports.signup = [
 			});
 			await user.save();
 
-			// Create JWT Signature and send token to client side along with userInfo (to be saved locally)
+			// Create JWT Signature and send token info + expiration to client side along with userInfo (to be saved locally)
 			const token = jwt.sign({ userId: `${req.body.userId}` }, `${process.env.SECRET_KEY}`, { expiresIn: "1w" });
-			return res.json({ token, user });
+			const expiresInMs = 7 * 24 * 60 * 60 * 1000; // 1 week expiration
+			const expiresAt = new Date(Date.now() + expiresInMs);
+
+			return res.json({ token, user, expiresAt });
 		});
 	}),
 ];
@@ -90,7 +93,10 @@ exports.login = asyncHandler(async (req: any, res: Response, next: NextFunction)
 
 		// Send token to client side (to be saved locally)
 		const token = jwt.sign({ user }, `${process.env.SECRET_KEY}`, { expiresIn: "1w" });
-		return res.json({ token, user });
+		const expiresInMs = 7 * 24 * 60 * 60 * 1000; // 1 week expiration
+		const expiresAt = new Date(Date.now() + expiresInMs);
+
+		return res.json({ token, user, expiresAt });
 	})(req, res, next);
 });
 
