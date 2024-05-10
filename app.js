@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const cors = require("cors");
+const cloudinary = require("cloudinary").v2;
 
 var indexRouter = require('./src/routes/index');
 var authRouter = require('./src/routes/auth');

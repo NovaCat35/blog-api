@@ -9,13 +9,13 @@ interface IBlog {
 	title: String;
 	content: String;
 	blog_img: {
-		img_file: string;
+		img_url: String;
+		cloudinary_id: String;
 		src: {
-			name: string;
-			link: string;
+			name: String;
+			link: String;
 		};
 	};
-	cloudinary_id: String;
 	author: Schema.Types.ObjectId;
 	comments: Schema.Types.ObjectId[];
 	published: boolean;
@@ -29,13 +29,13 @@ const BlogSchema = new Schema({
 	title: { type: String, required: true },
 	content: { type: String, required: true },
 	blog_img: {
-		img_file: { type: String, default: "default", required: true },
+		img_url: { type: String, default: "default", required: true },
+		cloudinary_id: { type: String, default: "default", required: true },
 		src: {
 			name: { type: String, default: "unsplash", required: true },
 			link: { type: String, default: "https://unsplash.com/", required: true },
 		},
 	},
-	cloudinary_id: String,
 	author: { type: Schema.Types.ObjectId, ref: "User", required: true },
 	comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
 	published: { type: Boolean, default: false, required: true },

@@ -4,7 +4,7 @@ Life is a beautiful mix of distractions, occasional depressions, and joyful mome
 
 This project is a current work in progress  ⚠️ 
 
-## Content Links 🌐
+## Project Links 🔗
 
 - Live Demo: work in progress
 - [Frontend Client](https://github.com/NovaCat35/blog-client)
@@ -15,6 +15,11 @@ This project is a current work in progress  ⚠️
 - **Stylesheet Language:** SCSS
 - **View Engine:** EJS
 - **Database:** MongoDB
+
+## Hosting Platforms 🌐
+- [fly.io](https://fly.io): for deploying and hosting the application
+- [MongoDB Atlas](https://www.mongodb.com/cloud/atlas): for cloud-based MongoDB hosting
+- [Cloudinary](https://cloudinary.com): for hosting and managing images
 
 ## Challenges 🔥
 One notable challenge I faced was setting up controllers and routes. This task involved managing various HTTP methods, parsing request bodies, and validating authorization through headers while handling diverse responses. To tackle connectivity issues and logic errors in controllers, I utilized Postman to debug and refine the logic without needing to fully develop the client-side on the local server. Additionally, I made efforts to maintain a clean and organized codebase by segregating authentication, Passport logic, and validation into separate files, which aided in effectively managing different API endpoints.
@@ -45,6 +50,7 @@ npm install luxon (IF TYPESCRIPT: npm install --save @types/luxon)
 npm install express jsonwebtoken
 npm install passport-jwt
 npm install cors
+npm install cloudinary
 ```
 
 > Reminder to check app.js for all added changes
