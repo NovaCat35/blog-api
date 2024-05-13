@@ -7,7 +7,7 @@ interface IComments {
 	comment: String;
 	likes: number;
 	date_posted: Date;
-	replies: String[];
+	replies: IComments[];
 }
 
 const CommentSchema = new Schema({

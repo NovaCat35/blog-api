@@ -1,12 +1,10 @@
 # Wayfarer's Frontier (API)
 
-Life is a beautiful mix of distractions, occasional depressions, and joyful moments. For all its worth, we offer gain to learn and hear stories those before us and with us now. Join me as I seek to collect insights from all walks of lives while I try to make sense of my own. 
-
-This project is a current work in progress  ⚠️ 
+Life is a beautiful mix of ups and downs. For all its worth, I like to sort out my thoughts, post some projects I'm working on, and collect insights from all walks of lives while I try to make sense of my own. 🧳
 
 ## Project Links 🔗
 
-- Live Demo: work in progress
+- Live Demo: https://wayfarers-frontier.pages.dev/ 
 - [Frontend Client](https://github.com/NovaCat35/blog-client)
 - Backend API _(You are here)_
 
