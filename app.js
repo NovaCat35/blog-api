@@ -10,12 +10,6 @@ const helmet = require("helmet");
 // initialize app with express
 var app = express();
 
-// Routes
-var indexRouter = require("./src/routes/index");
-var authRouter = require("./src/routes/auth");
-app.use("/", indexRouter);
-app.use("/auth", authRouter);
-
 // Allow all origins for development
 app.use(cors());
 app.use((req, res, next) => {
@@ -30,6 +24,12 @@ app.use((req, res, next) => {
 	res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 	next();
 });
+
+// Routes
+var indexRouter = require("./dist/routes/index");
+var authRouter = require("./dist/routes/auth");
+app.use("/", indexRouter);
+app.use("/auth", authRouter);
 
 /* ************** */
 /** PRODUCTION **/
@@ -57,8 +57,8 @@ app.use(compression()); // Compress all routes
 
 
 // view engine setup
-app.set("views", path.join(__dirname, "src/views"));
-app.set("view engine", "ejs");
+// app.set("views", path.join(__dirname, "src/views"));
+// app.set("view engine", "ejs");
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -87,7 +87,7 @@ async function main() {
 }
 
 //passport stuff
-require("./src/functions/passportStrats");
+require("./dist/functions/passportStrats");
 const passport = require("passport");
 app.use(passport.initialize());
 

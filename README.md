@@ -4,7 +4,7 @@ Life is a beautiful mix of ups and downs. For all its worth, I like to sort out 
 
 ## Project Links 🔗
 
-- Live Demo: https://wayfarers-frontier.pages.dev/ 
+- [Live Demo](https://wayfarers-frontier.pages.dev/)
 - [Frontend Client](https://github.com/NovaCat35/blog-client)
 - Backend API _(You are here)_
 
@@ -77,10 +77,12 @@ npm install helmet
 npm install express-rate-limit
 ```
 
-> Reminder to change env variables(within host provider) & set node version in our package.json & NODE_ENV = "production"
+> Reminder: change env variables(within host provider) & set node version in our package.json & NODE_ENV = "production" 
+
+> Reminder: After running npm run build (e.g. ts -> js) you need to change the routes from "./src/..." to "./dist/..."
 
 > NOTE: You must build or transpile the TypeScript files for production environment. Run `npm run build`. Note any path you have to /src may need to be changed to /dist for production.
 
 > NOTE: To connect github with Fly.io: https://fly.io/docs/app-guides/continuous-deployment-with-github-actions/
 
-> NOTE: fly launch -> connect github -> plug in .env on production -> fly deploy https://fly.io/docs/app-guides/continuous-deployment-with-github-actions/
+> NOTE: fly launch -> connect github -> plug in .env on production & make ts transpile to js & change route "src" to "dist" in app.js -> fly deploy https://fly.io/docs/app-guides/continuous-deployment-with-github-actions/
