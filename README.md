@@ -81,4 +81,6 @@ npm install express-rate-limit
 
 > NOTE: You must build or transpile the TypeScript files for production environment. Run `npm run build`. Note any path you have to /src may need to be changed to /dist for production.
 
-Fly.io (github actions): https://fly.io/docs/app-guides/continuous-deployment-with-github-actions/
+> NOTE: To connect github with Fly.io: https://fly.io/docs/app-guides/continuous-deployment-with-github-actions/
+
+> NOTE: fly launch -> connect github -> plug in .env on production -> fly deploy https://fly.io/docs/app-guides/continuous-deployment-with-github-actions/
