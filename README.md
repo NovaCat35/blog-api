@@ -80,3 +80,5 @@ npm install express-rate-limit
 > Reminder to change env variables(within host provider) & set node version in our package.json & NODE_ENV = "production"
 
 > NOTE: You must build or transpile the TypeScript files for production environment. Run `npm run build`. Note any path you have to /src may need to be changed to /dist for production.
+
+Fly.io (github actions): https://fly.io/docs/app-guides/continuous-deployment-with-github-actions/

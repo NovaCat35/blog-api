@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "build": "tsc",
     "start": "node ./bin/www",
     "devstart": "nodemon ./bin/www --exec ts-node & npm run scss",
     "serverstart": "DEBUG=members-only:* npm run devstart",
@@ -35,6 +36,7 @@
     "sass": "^1.74.1"
   },
   "devDependencies": {
+    "@flydotio/dockerfile": "^0.5.7",
     "@types/express": "^4.17.21",
     "@types/node": "^20.12.7",
     "nodemon": "^3.1.0",
