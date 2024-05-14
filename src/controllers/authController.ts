@@ -84,6 +84,9 @@ exports.signup = [
 exports.login = asyncHandler(async (req: any, res: Response, next: NextFunction) => {
 	// Authenticate user login with local strategy if user exists.
 	passport.authenticate("local", { session: false }, function (err: Error, user: IUser, info: any) {
+		console.log('req body:',req.body);
+		console.log('user:', user);
+		console.log('info:',info);
 		if (err) {
 			return res.status(500).json({ error: "Internal Server Error" });
 		}
