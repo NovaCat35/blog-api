@@ -109,3 +109,8 @@ exports.logout = asyncHandler(async (req: Request, res: Response, next: NextFunc
 	console.log("Logout: redirecting back to home page.");
 	res.redirect("/");
 });
+
+// Gets back the apy key for Tiny MCE
+exports.get_tiny_mce_api_key = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+	res.json({ api_key: process.env.TINY_MCE_API_KEY});
+});

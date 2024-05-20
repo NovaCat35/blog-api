@@ -34,7 +34,7 @@ exports.create_post = [
 	body("read_time").isNumeric().toInt().escape(),
 	body("title").trim().escape(),
 	body("content").trim().notEmpty().escape(),
-   body("blog_img.img_file").trim().escape(), 
+	body("blog_img.img_file").trim().escape(),
 	body("blog_img.src.name").trim().escape(),
 	body("blog_img.src.link").trim().escape(),
 	body("published").isBoolean().toBoolean(),
@@ -54,13 +54,13 @@ exports.create_post = [
 				title: req.body.title,
 				content: req.body.content,
 				blog_img: {
-					img_id: req.body.blog_img.img_id, 
+					img_id: req.body.blog_img.img_id,
 					src: {
 						name: req.body.blog_img.src.name,
 						link: req.body.blog_img.src.link,
 					},
-				},				
-            author: req.user,
+				},
+				author: req.user,
 				published: req.body.published,
 			});
 
@@ -85,7 +85,7 @@ exports.edit_post = [
 	body("read_time").isNumeric().toInt().escape(),
 	body("title").trim().escape(),
 	body("content").trim().notEmpty().escape(),
-   body("blog_img.img_file").trim().escape(), 
+	body("blog_img.img_file").trim().escape(),
 	body("blog_img.src.name").trim().escape(),
 	body("blog_img.src.link").trim().escape(),
 	body("published").isBoolean().toBoolean(),
@@ -105,12 +105,12 @@ exports.edit_post = [
 				title: req.body.title,
 				content: req.body.content,
 				blog_img: {
-					img_id: req.body.blog_img.img_id, 
+					img_id: req.body.blog_img.img_id,
 					src: {
 						name: req.body.blog_img.src.name,
 						link: req.body.blog_img.src.link,
 					},
-				},		
+				},
 				published: req.body.published,
 			};
 
@@ -154,10 +154,28 @@ exports.delete_post = [
 ];
 
 exports.get_all_comments = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
-	const comments = await Comment.find().populate("author").sort({ date_posted: -1 }).exec();
+	const blogPost = await Blog.findById(req.params.id).exec();
+
+	if (!blogPost) {
+		return res.status(404).json({ message: "Blog post not found" });
+	}
+
+	// iterate through the blog's comment list of _ids and push the comments documents into an array
+	const commentList = await Promise.all(
+		blogPost.comments.map(async (commentId: string) => {
+			return await Comment.findById(commentId).populate("author").exec();
+		})
+	);
+
+	const validComments = commentList.filter((comment) => {
+		comment.text !== null;
+	});
+
+	// Sort comments by date_posted in descending order
+	validComments.sort((a, b) => b.date_posted.getTime() - a.date_posted.getTime());
 
 	res.json({
-		comments,
+		commentList: validComments,
 	});
 });
 
@@ -185,7 +203,7 @@ exports.create_comment = [
 
 			const createdComment = await comment.save();
 			const updatedBlog = await Blog.findByIdAndUpdate(
-				req.body.blog_post,
+				req.body.blog_post._id,
 				{ $push: { comments: createdComment._id } }, // Push the new comment's ID to the comments array
 				{ new: true }
 			);
