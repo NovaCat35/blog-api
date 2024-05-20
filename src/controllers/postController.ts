@@ -228,3 +228,12 @@ exports.delete_comment = [
 		res.json({ message: "Comment deleted successfully" });
 	}),
 ];
+
+// Gets back the apy key for Tiny MCE
+exports.get_tiny_mce_api_key = [
+	passport.authenticate("jwt", { session: false }),
+
+	asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+		res.json({ api_key: process.env.TINY_MCE_API_KEY });
+	}),
+];

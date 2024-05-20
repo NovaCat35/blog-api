@@ -37,4 +37,7 @@ router.delete("/comments/:id", verifyToken, post_controller.delete_comment);
 // Protected route for viewing all users (only available for admin)
 router.get("/users", verifyToken, user_controller.show_all_users);
 
+// Get api key for tiny-mce
+router.get("/tiny_mce_api_key", verifyToken, post_controller.get_tiny_mce_api_key);
+
 module.exports = router;
