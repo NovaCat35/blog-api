@@ -183,8 +183,8 @@ exports.create_comment = [
 	passport.authenticate("jwt", { session: false }),
 
 	// sanitize body
-	body("blog_post").trim().escape(),
-	body("comment").trim().escape(),
+	body("blog_post_id").trim().escape().isMongoId(),
+	body("comment").trim().escape().isString(),
 
 	asyncHandler(async (req: any, res: Response, next: NextFunction) => {
 		const errors = validationResult(req);
@@ -196,9 +196,9 @@ exports.create_comment = [
 
 		try {
 			const comment = new Comment({
-				user: req.user,
-				blog_post: req.body.blog_post,
-				comment: req.body.comment,
+				user: req.user._id,
+				blog_post: req.body.blog_post_id,
+				text: req.body.comment,
 			});
 
 			const createdComment = await comment.save();
