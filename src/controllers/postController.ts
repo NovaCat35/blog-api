@@ -224,7 +224,23 @@ exports.delete_comment = [
 	passport.authenticate("jwt", { session: false }),
 
 	asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
-		Comment.findByIdAndDelete(req.params.id).exec();
+		const commentId = req.params.id;
+
+		// Delete the comment
+		const deletedComment = await Comment.findByIdAndDelete(commentId).exec();
+		if (!deletedComment) {
+			return res.status(404).json({ message: "Comment not found" });
+		}
+
+		// Find the blog containing this comment
+		const blog = await Blog.findOne({ comments: { $in: commentId } });
+
+		if (blog) {
+			// Remove the comment ID from the blog's comments array
+			blog.comments.pull(commentId);
+			await blog.save();
+		}
+
 		res.json({ message: "Comment deleted successfully" });
 	}),
 ];
