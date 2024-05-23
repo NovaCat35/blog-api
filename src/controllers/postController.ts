@@ -255,7 +255,7 @@ exports.edit_comment = [
 		const commentId = req.params.id;
 
 		// Edit the comment
-		const editComment = await Comment.findByIdAndUpdate(commentId, { text: req.body.comment }, { new: true }).exec();
+		const editComment = await Comment.findByIdAndUpdate(commentId, { text: req.body.comment, edited: true}, { new: true }).exec();
 		if (!editComment) {
 			return res.status(404).json({ message: "Comment not found" });
 		}
