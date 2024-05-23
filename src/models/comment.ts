@@ -8,6 +8,7 @@ interface IComments {
 	likes: number;
 	date_posted: Date;
 	replies: IComments[];
+	edited: Boolean;
 }
 
 const CommentSchema = new Schema({
@@ -17,6 +18,7 @@ const CommentSchema = new Schema({
 	likes: { type: Number, default: 0 },
 	date_posted: { type: Date, default: Date.now, required: true },
 	replies: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
+	edited: { type: Boolean, default: false},
 });
 
 CommentSchema.virtual("format_date").get(function (this: IComments) {

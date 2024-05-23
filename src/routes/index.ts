@@ -34,6 +34,9 @@ router.post("/comments", verifyToken, post_controller.create_comment);
 // Protected route for deleting comment
 router.delete("/comments/:id", verifyToken, post_controller.delete_comment);
 
+// Protected route for editing comment
+router.put("/comments/:id", verifyToken, post_controller.edit_comment);
+
 // Protected route for viewing all users (only available for admin)
 router.get("/users", verifyToken, user_controller.show_all_users);
 

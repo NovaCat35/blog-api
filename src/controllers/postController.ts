@@ -245,6 +245,25 @@ exports.delete_comment = [
 	}),
 ];
 
+exports.edit_comment = [
+	passport.authenticate("jwt", { session: false }),
+
+	// sanitize body
+	body("comment").trim().escape().isString(),
+
+	asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+		const commentId = req.params.id;
+
+		// Edit the comment
+		const editComment = await Comment.findByIdAndUpdate(commentId, { text: req.body.comment }, { new: true }).exec();
+		if (!editComment) {
+			return res.status(404).json({ message: "Comment not found" });
+		}
+
+		res.json({ message: "Comment edited successfully", editComment });
+	}),
+];
+
 // Gets back the apy key for Tiny MCE
 exports.get_tiny_mce_api_key = [
 	passport.authenticate("jwt", { session: false }),

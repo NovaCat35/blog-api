@@ -24,6 +24,8 @@ One notable challenge I faced was setting up controllers and routes. This task i
 
 Another challenge that emerged was during the process of connecting the client and server sides using fetch and JWT. Although Postman helped in testing route calls and logic, issues arose when implementing the client-side due to asynchronous login implementation, leading to error messages. I had to rewrite some logic to accompany earlier failed test with deliberate wrong authorization request.
 
+Status errors due to incomplete logic (i.e. 404, 504) also confused me. This happened when working with forms and fetch request on the client side, which I surmise is correct. Using postman, I carefully debug my code using POSTMAN as a way to see the result of my requests. This helped me figure out where lies the issue.
+
 ## Installation Guide ⚙️
 
 ### Development
@@ -65,7 +67,7 @@ npm install --save-dev ts-node nodemon
 
 > 1. Adjust tsconfig.json: uncomment "outDir", "allowJs", and change "outDir": "./dist"
 
-> 2. Run tsc (npx tsc/npm run build) to transpile your TypeScript files to JavaScript. From step 1, we will output this in "./dist". It may be better to just directly link this to script everytime we run devstart
+> 2. Run tsc (npx tsc/npm run build) to transpile your TypeScript files to JavaScript. From step 1, we will output this in "./dist". It may be better to just directly link this to script every time we run devstart. 
 
 ### Production
 
