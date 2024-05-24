@@ -17,8 +17,6 @@ exports.get_personal_profile = [
 				return res.status(404).json({ error: "User not found" });
 			}
 
-         console.log(`this is USER: ${user.username} and ${typeof user}`)
-
 			res.json({
 				username: user.username,
 				email: user.email,

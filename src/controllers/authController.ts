@@ -23,22 +23,22 @@ exports.signup = [
 
 		// Check if username already taken
 		if (userExist) {
-			errorMessages.push({errorType: 'username', errorMsg: "⚠️ Username taken."});
+			errorMessages.push({ errorType: "username", errorMsg: "⚠️ Username taken." });
 		}
 		// Check if user's email already exist
 		if (emailExist) {
-			errorMessages.push({errorType: 'email', errorMsg: "⚠️ Email already registered."});
+			errorMessages.push({ errorType: "email", errorMsg: "⚠️ Email already registered." });
 		}
 		// Check password confirmation
 		if (req.body.password !== req.body.password_confirm) {
-			errorMessages.push({errorType: 'password', errorMsg: "⚠️ Passwords does not match."});
+			errorMessages.push({ errorType: "password", errorMsg: "⚠️ Passwords does not match." });
 		}
 
 		// Push any fail validation msgs into errorMessages
 		if (!errors.isEmpty()) {
 			const validationErrors = errors.array() as { msg: string }[];
 			validationErrors.forEach((error) => {
-				errorMessages.push({errorType: 'other', errorMsg: error.msg});
+				errorMessages.push({ errorType: "other", errorMsg: error.msg });
 			});
 		}
 
@@ -53,12 +53,8 @@ exports.signup = [
 		}
 
 		// Hash and salt the password and store it in database
-		bcrypt.hash(req.body.password, 10, async (err: Error, hashedPassword: String) => {
-			// Check if hashing error
-			if (err) {
-				console.error("Error hashing password:", err);
-				return res.status(500).send("Internal Server Error");
-			}
+		try {
+			const hashedPassword = bcrypt.hash(req.body.password, 10);
 
 			let user = new User({
 				username: req.body.username,
@@ -71,12 +67,15 @@ exports.signup = [
 			await user.save();
 
 			// Create JWT Signature and send token info + expiration to client side along with userInfo (to be saved locally)
-			const token = jwt.sign({ userId: `${req.body.userId}` }, `${process.env.SECRET_KEY}`, { expiresIn: "1w" });
+			const token = jwt.sign({ userId: `${user._id}` }, `${process.env.SECRET_KEY}`, { expiresIn: "1w" });
 			const expiresInMs = 7 * 24 * 60 * 60 * 1000; // 1 week expiration
 			const expiresAt = new Date(Date.now() + expiresInMs);
 
 			return res.json({ token, user, expiresAt });
-		});
+		} catch (err) {
+			console.error("Error hashing password:", err);
+			return res.status(500).send("Internal Server Error");
+		}
 	}),
 ];
 
@@ -92,7 +91,7 @@ exports.login = asyncHandler(async (req: any, res: Response, next: NextFunction)
 		}
 
 		// Send token to client side (to be saved locally)
-		const token = jwt.sign({ user }, `${process.env.SECRET_KEY}`, { expiresIn: "1w" });
+		const token = jwt.sign({ userId: user._id }, `${process.env.SECRET_KEY}`, { expiresIn: "1w" });
 		const expiresInMs = 7 * 24 * 60 * 60 * 1000; // 1 week expiration
 		const expiresAt = new Date(Date.now() + expiresInMs);
 
