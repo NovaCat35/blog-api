@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 import {DateTime} from "luxon";
 
 export interface IUser {
-   _id: any;
+   _id: Schema.Types.ObjectId;
 	username: string;
 	email: string;
 	password: string;

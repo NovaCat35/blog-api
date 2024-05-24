@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 import { DateTime } from "luxon";
 
 interface IBlog {
-	_id: any;
+	_id: Schema.Types.ObjectId;
 	tags: String[];
 	read_time: number;
 	date_posted: Date;

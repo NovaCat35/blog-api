@@ -26,6 +26,8 @@ Another challenge that emerged was during the process of connecting the client a
 
 Status errors due to incomplete logic (i.e. 404, 504) also confused me. This happened when working with forms and fetch request on the client side, which I surmise is correct. Using postman, I carefully debug my code using POSTMAN as a way to see the result of my requests. This helped me figure out where lies the issue.
 
+During Production, authentication login/sign-up routes got flagged by Google for potential security issues. Working with Google Search Console tool, I reworked some parts and reviewed code in this area to prevent these security leaks in the future.
+
 ## Installation Guide ⚙️
 
 ### Development
