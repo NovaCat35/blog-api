@@ -33,9 +33,9 @@ opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = process.env.SECRET_KEY;
 
 passport.use(
-	new JwtStrategy(opts, async (jwt_payload: { user: typeof IUser }, done: DoneFunction) => {
+	new JwtStrategy(opts, async (jwt_payload: { userId: typeof IUser }, done: DoneFunction) => {
 		try {
-			const user = await User.findOne({ username: jwt_payload.user.username });
+			const user = await User.findById(jwt_payload.userId);
 			if (user) {
 				return done(null, user);
 			} else {
