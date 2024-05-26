@@ -37,6 +37,9 @@ router.delete("/comments/:id", verifyToken, post_controller.delete_comment);
 // Protected route for editing comment
 router.put("/comments/:id", verifyToken, post_controller.edit_comment);
 
+// Protected route for adding/removing user's like of a comment
+router.put("/comments/:id/likes", verifyToken, post_controller.handle_comment_likes);
+
 // Protected route for viewing all users (only available for admin)
 router.get("/users", verifyToken, user_controller.show_all_users);
 

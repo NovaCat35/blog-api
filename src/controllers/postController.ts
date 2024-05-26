@@ -255,12 +255,48 @@ exports.edit_comment = [
 		const commentId = req.params.id;
 
 		// Edit the comment
-		const editComment = await Comment.findByIdAndUpdate(commentId, { text: req.body.comment, edited: true}, { new: true }).exec();
+		const editComment = await Comment.findByIdAndUpdate(commentId, { text: req.body.comment, edited: true }, { new: true }).exec();
 		if (!editComment) {
 			return res.status(404).json({ message: "Comment not found" });
 		}
 
 		res.json({ message: "Comment edited successfully", editComment });
+	}),
+];
+
+exports.handle_comment_likes = [
+	passport.authenticate("jwt", { session: false }),
+
+	asyncHandler(async (req: any, res: Response, next: NextFunction) => {
+		const commentId = req.params.id;
+		const currUserId = req.user._id;
+
+		try {
+			// Find the comment by its ID
+			const comment = await Comment.findById(commentId).exec();
+
+			if (!comment) {
+				return res.status(404).json({ message: "Comment not found" });
+			}
+
+			// Check if the user has already liked the comment
+			const userLikedComment = comment.likes.includes(currUserId);
+
+			if (userLikedComment) {
+				// Remove user's like
+				comment.likes.pull(currUserId);
+			} else {
+				// Add user's like
+				comment.likes.push(currUserId);
+			}
+
+			// Save the updated comment
+			await comment.save();
+
+			res.json({ message: "Comment liked/un-liked successfully" });
+		} catch (err) {
+			next(err);
+		}
 	}),
 ];
 
