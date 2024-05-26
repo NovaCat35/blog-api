@@ -163,7 +163,7 @@ exports.get_all_comments = asyncHandler(async (req: AuthRequest, res: Response, 
 	// iterate through the blog's comment list of _ids and push the comments documents into an array
 	const commentList = await Promise.all(
 		blogPost.comments.map(async (commentId: string) => {
-			return await Comment.findById(commentId).populate("user").exec();
+			return await Comment.findById(commentId).populate("user").populate('replies').exec();
 		})
 	);
 
@@ -213,6 +213,49 @@ exports.create_comment = [
 				comment: createdComment,
 				updatedBlog: updatedBlog,
 			});
+		} catch (error) {
+			console.error("Error creating comment:", error);
+			return res.status(500).json({ error: "Internal Server Error" });
+		}
+	}),
+];
+
+exports.create_reply_comment = [
+	passport.authenticate("jwt", { session: false }),
+
+	// sanitize body
+	body("reply").trim().escape().isString(),
+
+	asyncHandler(async (req: any, res: Response, next: NextFunction) => {
+		const errors = validationResult(req);
+		const parentCommentId = req.params.id;
+
+		if (!errors.isEmpty()) {
+			console.log(errors.array());
+			return res.status(400).json({ errors: errors.array() });
+		}
+
+		try {
+			const parentComment = await Comment.findById(parentCommentId);
+			if (!parentComment) {
+				return res.status(404).json({ message: "Parent comment not found" });
+			}
+
+			// Create the reply comment (NOTE: we don't add this "replyComment's id into the blog's comments list like we did with the parent comment")
+			const replyComment = new Comment({
+				user: req.user._id,
+				text: req.body.reply,
+				blog_post: parentComment.blog_post, // Associate the reply with the same blog post 
+				isReply: true,
+			});
+
+			await replyComment.save();
+
+			// Add the reply's ID to the parent's replies array
+			parentComment.replies.push(replyComment._id);
+			await parentComment.save();
+
+			res.status(201).json({ message: "Reply posted successfully", replyComment });
 		} catch (error) {
 			console.error("Error creating comment:", error);
 			return res.status(500).json({ error: "Internal Server Error" });

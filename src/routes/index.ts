@@ -31,6 +31,9 @@ router.delete("/posts/:id", verifyToken, post_controller.delete_post);
 // Protected route for posting comment
 router.post("/comments", verifyToken, post_controller.create_comment);
 
+// Protected route for posting reply comment
+router.post("/comments/:id/reply", verifyToken, post_controller.create_reply_comment);
+
 // Protected route for deleting comment
 router.delete("/comments/:id", verifyToken, post_controller.delete_comment);
 
