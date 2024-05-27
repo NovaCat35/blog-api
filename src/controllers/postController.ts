@@ -293,6 +293,32 @@ exports.delete_comment = [
 	}),
 ];
 
+exports.delete_reply = [
+	passport.authenticate("jwt", { session: false }),
+
+	asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+		const commentId = req.params.commentId;
+		const replyId = req.params.replyId;
+
+		// Delete the comment
+		const deletedReply = await Comment.findByIdAndDelete(replyId).exec();
+		if (!deletedReply) {
+			return res.status(404).json({ message: "Reply not found" });
+		}
+
+		// Find the comment containing this reply
+		const comment = await Comment.findOne({ replies: replyId });
+
+		if (comment) {
+			// Remove the comment ID from the blog's comments array
+			comment.replies.pull(replyId);
+			await comment.save();
+		}
+
+		res.json({ message: "Reply deleted successfully" });
+	}),
+];
+
 exports.edit_comment = [
 	passport.authenticate("jwt", { session: false }),
 
