@@ -163,7 +163,12 @@ exports.get_all_comments = asyncHandler(async (req: AuthRequest, res: Response, 
 	// iterate through the blog's comment list of _ids and push the comments documents into an array
 	const commentList = await Promise.all(
 		blogPost.comments.map(async (commentId: string) => {
-			return await Comment.findById(commentId).populate("user").populate('replies').exec();
+			return await Comment.findById(commentId).populate("user").populate({
+				path: "replies",
+				populate: {
+					path: "user"
+				}
+			}).exec();
 		})
 	);
 
