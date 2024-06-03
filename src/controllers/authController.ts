@@ -6,6 +6,7 @@ const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const { body, validationResult } = require("express-validator");
 const passport = require("passport");
+const getRandomPfp = require("../functions/getRandomPfp");
 
 // SIGNUP route to generate JWT token
 exports.signup = [
@@ -54,13 +55,13 @@ exports.signup = [
 
 		// Hash and salt the password and store it in database
 		try {
-			const hashedPassword = bcrypt.hash(req.body.password, 10);
+			const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
 			let user = new User({
 				username: req.body.username,
 				email: req.body.email,
 				password: hashedPassword,
-				profile_img: "default",
+				profile_img: getRandomPfp(),
 				date_joined: new Date(),
 				admin_access: false,
 			});
