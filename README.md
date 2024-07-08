@@ -22,7 +22,8 @@ Life is a beautiful mix of ups and downs. For all its worth, I like to sort out 
 ## Challenges 🔥
 One notable challenge I faced was setting up controllers and routes. This task involved managing various HTTP methods, parsing request bodies, and validating authorization through headers while handling diverse responses. To tackle connectivity issues and logic errors in controllers, I utilized Postman to debug and refine the logic without needing to fully develop the client-side on the local server. Additionally, I made efforts to maintain a clean and organized codebase by segregating authentication, Passport logic, and validation into separate files, which aided in effectively managing different API endpoints.
 
-Another challenge that emerged was during the process of connecting the client and server sides using fetch and JWT. Although Postman helped in testing route calls and logic, issues arose when implementing the client-side due to asynchronous login implementation, leading to error messages. I had to rewrite some logic to accompany earlier failed test with deliberate wrong authorization request.
+Another challenge that emerged was during the process of connecting the client and server sides using fetch and JWT. Although Postman helped in testing route calls and logic, issues arose when implementing the client-side due to asynchronous login implementation, leading to error messages. I had to rewrite some logic to accompany earlier failed test with deliberate wrong authorization request. Please note, for authentication with JWT, see this video for helpful reminder: https://www.youtube.com/watch?v=7nafaH9SddU . In addition, please see the official doc for passport.js with JWT authentication.
+
 
 Status errors due to incomplete logic (i.e. 404, 504) also confused me. This happened when working with forms and fetch request on the client side, which I surmise is correct. Using postman, I carefully debug my code using POSTMAN as a way to see the result of my requests. This helped me figure out where lies the issue.
 
@@ -53,6 +54,7 @@ npm install express jsonwebtoken
 npm install passport-jwt
 npm install cors
 npm install cloudinary
+npm install --save multer
 ```
 
 > Reminder to check app.js for all added changes

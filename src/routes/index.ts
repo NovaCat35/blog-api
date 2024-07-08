@@ -3,6 +3,7 @@ var router = express.Router();
 const post_controller = require("../controllers/postController");
 const user_controller = require("../controllers/userController");
 const verifyToken = require("../functions/verifyToken");
+const upload = require("../middlewares/multer");
 
 /* GET INFO (DOESN'T REQUIRE AUTHENTICATION). */
 router.get("/", post_controller.get_all_posts);
@@ -20,7 +21,7 @@ router.get("/profile", verifyToken, user_controller.get_personal_profile);
 
 /* POSTING & DELETING: REQUIRES AUTHENTICATION */
 // Protected route for posting blog
-router.post("/posts", verifyToken, post_controller.create_post);
+router.post("/posts", verifyToken, upload.single("img_file"), post_controller.create_post);
 
 // Protected route for editing blog
 router.put("/posts/:id", verifyToken, post_controller.edit_post);

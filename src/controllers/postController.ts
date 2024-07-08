@@ -5,6 +5,7 @@ const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 import { AuthRequest } from "../functions/verifyToken";
 const passport = require("passport");
+const handleUpload = require("../configs/cloudinaryConfig");
 
 /**
  * Controller for everything blog related (blog posts, & comments)
@@ -30,11 +31,10 @@ exports.create_post = [
 	passport.authenticate("jwt", { session: false }),
 
 	// Sanitize body
-	body("tags").isArray().escape(),
-	body("read_time").isNumeric().toInt().escape(),
 	body("title").trim().escape(),
+	body("read_time").isNumeric().toInt().escape(),
+	body("tags").isArray().escape(),
 	body("content").trim().notEmpty().escape(),
-	body("blog_img.img_file").trim().escape(),
 	body("blog_img.src.name").trim().escape(),
 	body("blog_img.src.link").trim().escape(),
 	body("published").isBoolean().toBoolean(),
@@ -44,17 +44,25 @@ exports.create_post = [
 
 		if (!errors.isEmpty()) {
 			console.log(errors.array());
-			return res.status(400).json({ errors: "Invalid data provided." });
+			return res.status(400).json({ errors: `Invalid data provided! ${errors.array()}` });
 		}
 
 		try {
+			if (!req.file) {
+				return res.status(400).json({ error: "Missing required parameter - file",  });
+			}
+
+			// Handle file upload to cloudinary 
+			const cloudinaryResult = await handleUpload(req.file.path);
+
 			const blog = new Blog({
 				tags: req.body.tags,
 				read_time: req.body.read_time,
 				title: req.body.title,
 				content: req.body.content,
 				blog_img: {
-					img_id: req.body.blog_img.img_id,
+					img_url: cloudinaryResult.secure_url,
+					cloudinary_id: cloudinaryResult.public_id,
 					src: {
 						name: req.body.blog_img.src.name,
 						link: req.body.blog_img.src.link,
@@ -163,12 +171,15 @@ exports.get_all_comments = asyncHandler(async (req: AuthRequest, res: Response, 
 	// iterate through the blog's comment list of _ids and push the comments documents into an array
 	const commentList = await Promise.all(
 		blogPost.comments.map(async (commentId: string) => {
-			return await Comment.findById(commentId).populate("user").populate({
-				path: "replies",
-				populate: {
-					path: "user"
-				}
-			}).exec();
+			return await Comment.findById(commentId)
+				.populate("user")
+				.populate({
+					path: "replies",
+					populate: {
+						path: "user",
+					},
+				})
+				.exec();
 		})
 	);
 
@@ -250,7 +261,7 @@ exports.create_reply_comment = [
 			const replyComment = new Comment({
 				user: req.user._id,
 				text: req.body.reply,
-				blog_post: parentComment.blog_post, // Associate the reply with the same blog post 
+				blog_post: parentComment.blog_post, // Associate the reply with the same blog post
 				isReply: true,
 			});
 
