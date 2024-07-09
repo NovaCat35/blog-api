@@ -49,7 +49,7 @@ exports.create_post = [
 
 		try {
 			if (!req.file) {
-				return res.status(400).json({ error: "Missing required parameter - file",  });
+				return res.status(400).json({ error: "Missing required parameter - file" });
 			}
 
 			// Handle file upload to cloudinary 
@@ -89,14 +89,13 @@ exports.edit_post = [
 	passport.authenticate("jwt", { session: false }),
 
 	// Sanitize body
-	body("tags").isArray().escape(),
-	body("read_time").isNumeric().toInt().escape(),
-	body("title").trim().escape(),
-	body("content").trim().notEmpty().escape(),
-	body("blog_img.img_file").trim().escape(),
-	body("blog_img.src.name").trim().escape(),
-	body("blog_img.src.link").trim().escape(),
-	body("published").isBoolean().toBoolean(),
+	body('title').trim().escape(),
+	body('read_time').isNumeric().toInt().escape(),
+	body('tags').isArray().escape(),
+	body('content').trim().notEmpty().escape(),
+	body('blog_img.src.name').trim().escape(),
+	body('blog_img.src.link').trim().escape(),
+	body('published').isBoolean().toBoolean(),
 
 	asyncHandler(async (req: any, res: Response, next: NextFunction) => {
 		const errors = validationResult(req);
@@ -115,10 +114,11 @@ exports.edit_post = [
 				blog_img: {
 					img_id: req.body.blog_img.img_id,
 					src: {
-						name: req.body.blog_img.src.name,
-						link: req.body.blog_img.src.link,
+						name: req.body['blog_img.src.name'],
+						link: req.body['blog_img.src.link'],
 					},
 				},
+				author: req.user,
 				published: req.body.published,
 			};
 
