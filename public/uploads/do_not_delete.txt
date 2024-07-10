@@ -1,0 +1,4 @@
+This uploads folder is essential for multer library to temporary
+store and process the images uploaded here to cloudinary.
+
+PLEASE DO NOT DELETE THIS FOLDER!! 

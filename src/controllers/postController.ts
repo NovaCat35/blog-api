@@ -64,8 +64,8 @@ exports.create_post = [
 					img_url: cloudinaryResult.secure_url,
 					cloudinary_id: cloudinaryResult.public_id,
 					src: {
-						name: req.body.blog_img.src.name,
-						link: req.body.blog_img.src.link,
+						name: req.body['blog_img.src.name'],
+						link: req.body['blog_img.src.link'],
 					},
 				},
 				author: req.user,
@@ -112,7 +112,8 @@ exports.edit_post = [
 				title: req.body.title,
 				content: req.body.content,
 				blog_img: {
-					img_id: req.body.blog_img.img_id,
+					img_url: req.body.img_file,
+					cloudinary_id: '',
 					src: {
 						name: req.body['blog_img.src.name'],
 						link: req.body['blog_img.src.link'],
