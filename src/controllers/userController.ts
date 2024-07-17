@@ -44,7 +44,7 @@ exports.show_all_users = [
 ];
 
 exports.get_user_profile = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-	const [user, posts, comments] = await Promise.all([User.findById(req.params.id).exec(), Blog.find({ author: req.params.id }).sort({ date_posted: -1 }).exec(), Comment.find({ user: req.params.id }).sort({ date_posted: -1 }).exec()]);
+	const [user, posts, comments] = await Promise.all([User.findById(req.params.id).exec(), Blog.find({ author: req.params.id }).sort({ date_posted: -1 }).exec(), Comment.find({ user: req.params.id }).sort({ date_posted: -1 }).populate('blog_post', 'title').exec()]);
 	res.json({
 		user,
 		posts,
