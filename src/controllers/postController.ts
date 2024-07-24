@@ -52,7 +52,7 @@ exports.create_post = [
 				return res.status(400).json({ error: "Missing required parameter - file" });
 			}
 
-			// Handle file upload to cloudinary 
+			// Handle file upload to cloudinary
 			const cloudinaryResult = await handleUpload(req.file.path);
 
 			const blog = new Blog({
@@ -64,8 +64,8 @@ exports.create_post = [
 					img_url: cloudinaryResult.secure_url,
 					cloudinary_id: cloudinaryResult.public_id,
 					src: {
-						name: req.body['blog_img.src.name'],
-						link: req.body['blog_img.src.link'],
+						name: req.body["blog_img.src.name"],
+						link: req.body["blog_img.src.link"],
 					},
 				},
 				author: req.user,
@@ -89,13 +89,13 @@ exports.edit_post = [
 	passport.authenticate("jwt", { session: false }),
 
 	// Sanitize body
-	body('title').trim().escape(),
-	body('read_time').isNumeric().toInt().escape(),
-	body('tags').isArray().escape(),
-	body('content').trim().notEmpty().escape(),
-	body('blog_img.src.name').trim().escape(),
-	body('blog_img.src.link').trim().escape(),
-	body('published').isBoolean().toBoolean(),
+	body("title").trim().escape(),
+	body("read_time").isNumeric().toInt().escape(),
+	body("tags").isArray().escape(),
+	body("content").trim().notEmpty().escape(),
+	body("blog_img.src.name").trim().escape(),
+	body("blog_img.src.link").trim().escape(),
+	body("published").isBoolean().toBoolean(),
 
 	asyncHandler(async (req: any, res: Response, next: NextFunction) => {
 		const errors = validationResult(req);
@@ -113,10 +113,10 @@ exports.edit_post = [
 				content: req.body.content,
 				blog_img: {
 					img_url: req.body.img_file,
-					cloudinary_id: '',
+					cloudinary_id: "",
 					src: {
-						name: req.body['blog_img.src.name'],
-						link: req.body['blog_img.src.link'],
+						name: req.body["blog_img.src.name"],
+						link: req.body["blog_img.src.link"],
 					},
 				},
 				author: req.user,
@@ -162,7 +162,7 @@ exports.delete_post = [
 	}),
 ];
 
-exports.get_all_comments = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+exports.get_blog_comments = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
 	const blogPost = await Blog.findById(req.params.id).exec();
 
 	if (!blogPost) {
@@ -190,6 +190,29 @@ exports.get_all_comments = asyncHandler(async (req: AuthRequest, res: Response, 
 
 	// Sort comments by date_posted in descending order
 	validComments.sort((a, b) => b.date_posted.getTime() - a.date_posted.getTime());
+
+	res.json({
+		commentList: validComments,
+	});
+});
+
+exports.get_all_comments = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+	const comments = await Comment.find()
+		.populate("user")
+		.populate({
+			path: "replies",
+			populate: {
+				path: "user",
+			},
+		})
+		.exec();
+
+	const validComments = comments.filter((comment: any) => {
+		return comment.text !== null;
+	});
+
+	// Sort comments by date_posted in descending order
+	validComments.sort((a: any, b: any) => b.date_posted.getTime() - a.date_posted.getTime());
 
 	res.json({
 		commentList: validComments,

@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { DateTime } from "luxon";
 
-interface IComments {
+export interface IComments {
 	_id: Schema.Types.ObjectId;
 	user: Schema.Types.ObjectId;
 	blog_post: Schema.Types.ObjectId;

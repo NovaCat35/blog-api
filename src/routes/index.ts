@@ -12,7 +12,9 @@ router.get("/posts", post_controller.get_all_posts);
 
 router.get("/posts/:id", post_controller.get_post);
 
-router.get("/posts/:id/comments", post_controller.get_all_comments);
+router.get("/posts/:id/comments", post_controller.get_blog_comments);
+
+router.get("/comments", post_controller.get_all_comments);
 
 router.get("/users/:id", user_controller.get_user_profile);
 
