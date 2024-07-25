@@ -199,6 +199,7 @@ exports.get_blog_comments = asyncHandler(async (req: AuthRequest, res: Response,
 exports.get_all_comments = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
 	const comments = await Comment.find()
 		.populate("user")
+		.populate('blog_post', 'title')
 		.populate({
 			path: "replies",
 			populate: {
