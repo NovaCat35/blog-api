@@ -196,9 +196,17 @@ exports.get_blog_comments = asyncHandler(async (req: AuthRequest, res: Response,
 	});
 });
 
+/** 
+ * GETS ALL PARENT COMMENTS for blogs.
+ * Does not include reply comments b/c CMS site loops through parent comments, which then displays the comment's replies
+ * */ 
 exports.get_all_comments = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
-	const comments = await Comment.find()
-		.populate("user")
+	// Find all blogs and get their comments
+	const blogs = await Blog.find().select('comments').exec();
+	const commentIds = blogs.reduce( (acc: Array<string>, blog: any) => acc.concat(blog.comments), []);
+
+	const comments = await Comment.find({ _id: { $in: commentIds } })
+	.populate("user")
 		.populate('blog_post', 'title')
 		.populate({
 			path: "replies",

@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { DateTime } from "luxon";
 
-interface IBlog {
+export interface IBlog {
 	_id: Schema.Types.ObjectId;
 	tags: String[];
 	read_time: number;
