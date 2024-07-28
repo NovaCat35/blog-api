@@ -196,18 +196,18 @@ exports.get_blog_comments = asyncHandler(async (req: AuthRequest, res: Response,
 	});
 });
 
-/** 
+/**
  * GETS ALL PARENT COMMENTS for blogs.
  * Does not include reply comments b/c CMS site loops through parent comments, which then displays the comment's replies
- * */ 
+ * */
 exports.get_all_comments = asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
 	// Find all blogs and get their comments
-	const blogs = await Blog.find().select('comments').exec();
-	const commentIds = blogs.reduce( (acc: Array<string>, blog: any) => acc.concat(blog.comments), []);
+	const blogs = await Blog.find().select("comments").exec();
+	const commentIds = blogs.reduce((acc: Array<string>, blog: any) => acc.concat(blog.comments), []);
 
 	const comments = await Comment.find({ _id: { $in: commentIds } })
-	.populate("user")
-		.populate('blog_post', 'title')
+		.populate("user")
+		.populate("blog_post", "title")
 		.populate({
 			path: "replies",
 			populate: {
@@ -318,11 +318,17 @@ exports.delete_comment = [
 	asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
 		const commentId = req.params.id;
 
-		// Delete the comment
-		const deletedComment = await Comment.findByIdAndDelete(commentId).exec();
-		if (!deletedComment) {
+		// Find the comment by its ID
+		const comment = await Comment.findById(commentId).exec();
+		if (!comment) {
 			return res.status(404).json({ message: "Comment not found" });
 		}
+
+		// Delete all replies to this comment
+		await Comment.deleteMany({ _id: { $in: comment.replies } }).exec();
+
+		// Delete the parent comment itself
+		await Comment.findByIdAndDelete(commentId).exec();
 
 		// Find the blog containing this comment
 		const blog = await Blog.findOne({ comments: { $in: commentId } });
