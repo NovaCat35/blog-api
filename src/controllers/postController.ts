@@ -144,6 +144,11 @@ exports.delete_post = [
 	passport.authenticate("jwt", { session: false }),
 
 	asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+		// Check user authorization (admin privilege)
+		if (!req.user || !req.user.admin_access) {
+			return res.status(403).json({ error: "Unauthorized: Admin access required." });
+		}
+
 		const deletedBlog = await Blog.findByIdAndDelete(req.params.id).exec();
 
 		if (!deletedBlog) {
@@ -316,6 +321,11 @@ exports.delete_comment = [
 	passport.authenticate("jwt", { session: false }),
 
 	asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+		// Check user authorization (admin privilege)
+		if (!req.user || !req.user.admin_access) {
+			return res.status(403).json({ error: "Unauthorized: Admin access required." });
+		}
+
 		const commentId = req.params.id;
 
 		// Find the comment by its ID
@@ -347,6 +357,11 @@ exports.delete_reply = [
 	passport.authenticate("jwt", { session: false }),
 
 	asyncHandler(async (req: AuthRequest, res: Response, next: NextFunction) => {
+		// Check user authorization (admin privilege)
+		if (!req.user || !req.user.admin_access) {
+			return res.status(403).json({ error: "Unauthorized: Admin access required." });
+		}
+
 		const commentId = req.params.commentId;
 		const replyId = req.params.replyId;
 

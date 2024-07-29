@@ -2,6 +2,14 @@ import { Request, Response, NextFunction } from "express";
 
 export interface AuthRequest extends Request {
 	token?: string;
+	user?: {
+		_id: string;
+		username: string;
+		email: string;
+		profile_img: string;
+		date_joined: string;
+		admin_access: boolean;
+	 };
 }
 
 /**
