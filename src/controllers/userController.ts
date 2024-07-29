@@ -62,18 +62,27 @@ exports.delete_user = [
 		if (!req.user || !req.user.admin_access) {
 			return res.status(403).json({ error: "Unauthorized: Admin access required." });
 		}
-		
+
 		const userId = req.params.id;
 
 		// Find the user by its ID
 		const user = await User.findByIdAndDelete(userId).exec();
 		if (!user) {
-			return res.status(404).json({ message: "Comment not found" });
+			return res.status(404).json({ message: "User not found" });
 		}
 
-		// Example of cascading delete for comments and blog posts
-		await Comment.deleteMany({ "user._id": userId }).exec();
-		await Blog.deleteMany({ "author._id": userId }).exec();
+		// Find all comments made by the user
+		const userComments = await Comment.find({ user: userId }).exec();
+		const commentIds = userComments.map((comment: { _id: string }) => comment._id);
+
+		// Delete all comments made by the user (including replies)
+		await Comment.deleteMany({ user: userId }).exec();
+
+		// Delete all blogs authored by the user
+		await Blog.deleteMany({ author: userId }).exec();
+
+		// Remove user's comments from other blogs
+		await Blog.updateMany({}, { $pull: { comments: { $in: commentIds } } }).exec();
 
 		res.json({ message: "User deleted successfully" });
 	}),

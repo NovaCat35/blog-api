@@ -371,11 +371,11 @@ exports.delete_reply = [
 			return res.status(404).json({ message: "Reply not found" });
 		}
 
-		// Find the comment containing this reply
+		// Find the parent comment containing this reply
 		const comment = await Comment.findOne({ replies: replyId });
 
 		if (comment) {
-			// Remove the comment ID from the blog's comments array
+			// Remove the reply's ID from the parent comment's array
 			comment.replies.pull(replyId);
 			await comment.save();
 		}
