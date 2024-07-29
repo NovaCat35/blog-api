@@ -44,10 +44,30 @@ exports.show_all_users = [
 ];
 
 exports.get_user_profile = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-	const [user, posts, comments] = await Promise.all([User.findById(req.params.id).exec(), Blog.find({ author: req.params.id }).sort({ date_posted: -1 }).exec(), Comment.find({ user: req.params.id }).sort({ date_posted: -1 }).populate('blog_post', 'title').exec()]);
+	const [user, posts, comments] = await Promise.all([User.findById(req.params.id).exec(), Blog.find({ author: req.params.id }).sort({ date_posted: -1 }).exec(), Comment.find({ user: req.params.id }).sort({ date_posted: -1 }).populate("blog_post", "title").exec()]);
 	res.json({
 		user,
 		posts,
 		comments,
 	});
 });
+
+exports.delete_user = [
+	passport.authenticate("jwt", { session: false }),
+
+	asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+		const userId = req.params.id;
+
+		// Find the user by its ID
+		const user = await User.findByIdAndDelete(userId).exec();
+		if (!user) {
+			return res.status(404).json({ message: "Comment not found" });
+		}
+
+		// Example of cascading delete for comments and blog posts
+		await Comment.deleteMany({ "user._id": userId }).exec();
+		await Blog.deleteMany({ "author._id": userId }).exec();
+
+		res.json({ message: "User deleted successfully" });
+	}),
+];
