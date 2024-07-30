@@ -156,7 +156,17 @@ exports.delete_post = [
 		}
 
 		try {
-			// Additionally delete all dependent comments attached to the deleted blog
+			// Fetch all comments associated with the blog
+			const comments = await Comment.find({ _id: { $in: deletedBlog.comment } }).exec();
+
+			// Iterate through each comment to delete its replies
+			for (const comment of comments) {
+				if (comment.replies && comment.replies.length > 0) {
+					await Comment.deleteMany({ _id: { $in: comment.replies } }).exec();
+				}
+			}
+
+			// Delete all comments associated with the blog
 			await Comment.deleteMany({ _id: { $in: deletedBlog.comments } }).exec();
 
 			res.json({ message: "Blog post and related comments deleted successfully." });
