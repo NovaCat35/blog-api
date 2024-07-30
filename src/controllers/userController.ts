@@ -5,6 +5,7 @@ const Blog = require("../models/blogPost");
 const asyncHandler = require("express-async-handler");
 const passport = require("passport");
 import { AuthRequest } from "../functions/verifyToken";
+const { handleDelete } = require("../configs/cloudinaryConfig");
 
 exports.get_personal_profile = [
 	passport.authenticate("jwt", { session: false }),
@@ -71,32 +72,37 @@ exports.delete_user = [
 			return res.status(404).json({ message: "User not found" });
 		}
 
-		// Find all comments made by the user
-		const userComments = await Comment.find({ user: userId }).exec();
-		const commentIds = userComments.map((comment: { _id: string }) => comment._id);
+		try {
+			// Find all comments made by the user
+			const userComments = await Comment.find({ user: userId }).exec();
+			const commentIds = userComments.map((comment: { _id: string }) => comment._id);
 
-		// Delete all comments made by the user (including replies)
-		await Comment.deleteMany({ user: userId }).exec();
+			// Delete all comments made by the user (including replies)
+			await Comment.deleteMany({ user: userId }).exec();
 
-		// Find all blogs authored by the user
-		const userBlogs = await Blog.find({ author: userId }).exec();
+			// Find all blogs authored by the user
+			const userBlogs = await Blog.find({ author: userId }).exec();
 
-		// Delete all blogs authored by the user and their associated images from Cloudinary
-		for (const blog of userBlogs) {
-			if (blog.blog_img && blog.blog_img.cloudinary_id) {
-				try {
-					const cloudinaryResult = await handleDelete(blog.blog_img.cloudinary_id);
-					console.log("Cloudinary deletion result:", cloudinaryResult);
-				} catch (error) {
-					console.error("Error deleting image from Cloudinary:", error);
+			// Delete all blogs authored by the user and their associated images from Cloudinary
+			for (const blog of userBlogs) {
+				if (blog.blog_img && blog.blog_img.cloudinary_id) {
+					try {
+						const cloudinaryResult = await handleDelete(blog.blog_img.cloudinary_id);
+						console.log("Cloudinary deletion result:", cloudinaryResult);
+					} catch (error) {
+						console.error("Error deleting image from Cloudinary:", error);
+					}
 				}
+				await Blog.findByIdAndDelete(blog._id).exec();
 			}
-			await Blog.findByIdAndDelete(blog._id).exec();
-		}
-		
-		// Remove user's comments from other blogs
-		await Blog.updateMany({}, { $pull: { comments: { $in: commentIds } } }).exec();
 
-		res.json({ message: "User deleted successfully" });
+			// Remove user's comments from other blogs
+			await Blog.updateMany({}, { $pull: { comments: { $in: commentIds } } }).exec();
+
+			res.json({ message: "User deleted successfully" });
+		} catch (error) {
+			console.error("Error deleting user data:", error);
+			res.status(500).json({ error: "Internal Server Error" });
+		}
 	}),
 ];
