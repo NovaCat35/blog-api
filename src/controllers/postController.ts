@@ -5,7 +5,7 @@ const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 import { AuthRequest } from "../functions/verifyToken";
 const passport = require("passport");
-const handleUpload = require("../configs/cloudinaryConfig");
+const { handleUpload, handleDelete } = require("../configs/cloudinaryConfig");
 
 /**
  * Controller for everything blog related (blog posts, & comments)
@@ -156,6 +156,17 @@ exports.delete_post = [
 				return res.status(404).json({ error: "Blog post not found." });
 			}
 
+			// Handle delete blog's img from Cloudinary
+			if (deletedBlog.blog_img && deletedBlog.blog_img.cloudinary_id) {
+				try{
+					const cloudinaryResult = await handleDelete(deletedBlog.blog_img.cloudinary_id)
+					console.log("Cloudinary deletion result:", cloudinaryResult);
+				} catch (error) {
+					console.error("Error deleting image from Cloudinary:", error);
+					return res.status(500).json({ error: "Error deleting image from Cloudinary." });
+				}
+			}
+			
 			// Fetch all comments associated with the blog
 			const comments = await Comment.find({ _id: { $in: deletedBlog.comments } }).exec();
 

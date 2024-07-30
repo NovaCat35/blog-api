@@ -13,4 +13,10 @@ async function handleUpload(file: string) {
 	return res;
 }
 
-module.exports = handleUpload;
+
+async function handleDelete(cloudinaryId: string) {
+	const res = await cloudinary.uploader.destroy(cloudinaryId, { folder: "blog_posts/main_blog_images" })
+	return res;
+}
+
+module.exports = { handleUpload, handleDelete };
