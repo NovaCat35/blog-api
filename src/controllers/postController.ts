@@ -149,15 +149,15 @@ exports.delete_post = [
 			return res.status(403).json({ error: "Unauthorized: Admin access required." });
 		}
 
-		const deletedBlog = await Blog.findByIdAndDelete(req.params.id).exec();
-
-		if (!deletedBlog) {
-			return res.status(404).json({ error: "Blog post not found." });
-		}
-
 		try {
+			const deletedBlog = await Blog.findByIdAndDelete(req.params.id).exec();
+
+			if (!deletedBlog) {
+				return res.status(404).json({ error: "Blog post not found." });
+			}
+
 			// Fetch all comments associated with the blog
-			const comments = await Comment.find({ _id: { $in: deletedBlog.comment } }).exec();
+			const comments = await Comment.find({ _id: { $in: deletedBlog.comments } }).exec();
 
 			// Iterate through each comment to delete its replies
 			for (const comment of comments) {
