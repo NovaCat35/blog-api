@@ -78,9 +78,22 @@ exports.delete_user = [
 		// Delete all comments made by the user (including replies)
 		await Comment.deleteMany({ user: userId }).exec();
 
-		// Delete all blogs authored by the user
-		await Blog.deleteMany({ author: userId }).exec();
+		// Find all blogs authored by the user
+		const userBlogs = await Blog.find({ author: userId }).exec();
 
+		// Delete all blogs authored by the user and their associated images from Cloudinary
+		for (const blog of userBlogs) {
+			if (blog.blog_img && blog.blog_img.cloudinary_id) {
+				try {
+					const cloudinaryResult = await handleDelete(blog.blog_img.cloudinary_id);
+					console.log("Cloudinary deletion result:", cloudinaryResult);
+				} catch (error) {
+					console.error("Error deleting image from Cloudinary:", error);
+				}
+			}
+			await Blog.findByIdAndDelete(blog._id).exec();
+		}
+		
 		// Remove user's comments from other blogs
 		await Blog.updateMany({}, { $pull: { comments: { $in: commentIds } } }).exec();
 
