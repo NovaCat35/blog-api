@@ -33,7 +33,7 @@ exports.create_post = [
 	// Sanitize body
 	body("title").trim().escape(),
 	body("read_time").isNumeric().toInt().escape(),
-	body("tags").isArray().escape(),
+	body("tags").isArray(),
 	body("content").trim().notEmpty().escape(),
 	body("blog_img.src.name").trim().escape(),
 	body("blog_img.src.link").trim().escape(),
@@ -91,7 +91,7 @@ exports.edit_post = [
 	// Sanitize body
 	body("title").trim().escape(),
 	body("read_time").isNumeric().toInt().escape(),
-	body("tags").isArray().escape(),
+	body("tags").isArray(),
 	body("content").trim().notEmpty().escape(),
 	body("blog_img.src.name").trim().escape(),
 	body("blog_img.src.link").trim().escape(),
