@@ -36,7 +36,7 @@ exports.create_post = [
 	body("tags").isArray(),
 	body("content").trim().notEmpty().escape(),
 	body("blog_img.src.name").trim().escape(),
-	body("blog_img.src.link").trim().escape(),
+	body("blog_img.src.link").trim(),
 	body("published").isBoolean().toBoolean(),
 
 	asyncHandler(async (req: any, res: Response, next: NextFunction) => {
@@ -94,7 +94,7 @@ exports.edit_post = [
 	body("tags").isArray(),
 	body("content").trim().notEmpty().escape(),
 	body("blog_img.src.name").trim().escape(),
-	body("blog_img.src.link").trim().escape(),
+	body("blog_img.src.link").trim(),
 	body("published").isBoolean().toBoolean(),
 
 	asyncHandler(async (req: any, res: Response, next: NextFunction) => {
