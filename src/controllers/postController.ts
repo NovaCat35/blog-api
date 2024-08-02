@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 const Blog = require("../models/blogPost");
+import { IBlog } from "../models/blogPost";
 const Comment = require("../models/comment");
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
@@ -31,10 +32,10 @@ exports.create_post = [
 	passport.authenticate("jwt", { session: false }),
 
 	// Sanitize body
-	body("title").trim().escape(),
+	body("title").isString().trim().escape(),
 	body("read_time").isNumeric().toInt().escape(),
 	body("tags").isArray(),
-	body("content").trim().notEmpty().escape(),
+	body("content").isString().trim().notEmpty().escape(),
 	body("blog_img.src.name").trim().escape(),
 	body("blog_img.src.link").trim(),
 	body("published").isBoolean().toBoolean(),
@@ -45,6 +46,11 @@ exports.create_post = [
 		if (!errors.isEmpty()) {
 			console.log(errors.array());
 			return res.status(400).json({ errors: `Invalid data provided! ${errors.array()}` });
+		}
+
+		// Check user authorization (admin privilege)
+		if (!req.user || !req.user.admin_access) {
+			return res.status(403).json({ error: "Unauthorized: Admin access required." });
 		}
 
 		try {
@@ -89,12 +95,12 @@ exports.edit_post = [
 	passport.authenticate("jwt", { session: false }),
 
 	// Sanitize body
-	body("title").trim().escape(),
+	body("title").isString().trim().escape(),
 	body("read_time").isNumeric().toInt().escape(),
 	body("tags").isArray(),
-	body("content").trim().notEmpty().escape(),
-	body("blog_img.src.name").trim().escape(),
-	body("blog_img.src.link").trim(),
+	body("content").isString().trim().notEmpty().escape(),
+	body("blog_img.src.name").isString().trim().escape(),
+	body("blog_img.src.link").isString().trim().escape(),
 	body("published").isBoolean().toBoolean(),
 
 	asyncHandler(async (req: any, res: Response, next: NextFunction) => {
@@ -105,33 +111,45 @@ exports.edit_post = [
 			return res.status(400).json({ errors: "Invalid data provided." });
 		}
 
+		// Check user authorization (admin privilege)
+		if (!req.user || !req.user.admin_access) {
+			return res.status(403).json({ error: "Unauthorized: Admin access required." });
+		}
+
 		try {
-			const updatedFields = {
-				tags: req.body.tags,
-				read_time: req.body.read_time,
-				title: req.body.title,
-				content: req.body.content,
-				blog_img: {
-					img_url: req.body.img_file,
-					cloudinary_id: "",
-					src: {
-						name: req.body["blog_img.src.name"],
-						link: req.body["blog_img.src.link"],
-					},
-				},
-				author: req.user,
-				published: req.body.published,
-			};
+			// Find the blog post by ID
+			const blogPost = await Blog.findById(req.params.id).exec();
 
-			const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, updatedFields, { new: true }).exec();
-
-			if (!updatedBlog) {
+			if (!blogPost) {
 				return res.status(404).json({ error: "Blog post not found." });
 			}
 
-			res.status(201).json({
+			// Update fields if they are provided in the request
+			if (req.body.title) blogPost.title = req.body.title;
+			if (req.body.read_time) blogPost.read_time = req.body.read_time;
+			if (req.body.tags) blogPost.tags = req.body.tags;
+			if (req.body.content) blogPost.content = req.body.content;
+			if (req.body.published !== undefined) blogPost.published = req.body.published;
+
+			if (req.body["blog_img.src.name"] || req.body["blog_img.src.link"]) {
+				blogPost.blog_img.src.name = req.body["blog_img.src.name"];
+				blogPost.blog_img.src.link = req.body["blog_img.src.link"];
+			}
+
+			// Handle image file upload if a new file is provided
+			if (req.file) {
+				// Handle file upload to cloudinary
+				const cloudinaryResult = await handleUpload(req.file.path);
+				blogPost.blog_img.img_url = cloudinaryResult.secure_url;
+				blogPost.blog_img.cloudinary_id = cloudinaryResult.public_id;
+			}
+
+			// Save the updated blog post
+			await blogPost.save();
+
+			res.status(200).json({
 				message: "Blog post edited successfully.",
-				blog: updatedBlog,
+				blog: blogPost,
 			});
 		} catch (error) {
 			console.error("Error creating blog post:", error);
@@ -158,15 +176,15 @@ exports.delete_post = [
 
 			// Handle delete blog's img from Cloudinary
 			if (deletedBlog.blog_img && deletedBlog.blog_img.cloudinary_id) {
-				try{
-					const cloudinaryResult = await handleDelete(deletedBlog.blog_img.cloudinary_id)
+				try {
+					const cloudinaryResult = await handleDelete(deletedBlog.blog_img.cloudinary_id);
 					console.log("Cloudinary deletion result:", cloudinaryResult);
 				} catch (error) {
 					console.error("Error deleting image from Cloudinary:", error);
 					return res.status(500).json({ error: "Error deleting image from Cloudinary." });
 				}
 			}
-			
+
 			// Fetch all comments associated with the blog
 			const comments = await Comment.find({ _id: { $in: deletedBlog.comments } }).exec();
 

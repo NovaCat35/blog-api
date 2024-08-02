@@ -29,8 +29,8 @@ const BlogSchema = new Schema({
 	title: { type: String, required: true },
 	content: { type: String, required: true },
 	blog_img: {
-		img_url: { type: String, default: "default", required: true },
-		cloudinary_id: { type: String, default: "default", required: true },
+		img_url: { type: String, default: "default" },
+		cloudinary_id: { type: String, default: "default"},
 		src: {
 			name: { type: String, default: "unsplash", required: true },
 			link: { type: String, default: "https://unsplash.com/", required: true },
