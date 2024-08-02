@@ -26,7 +26,7 @@ router.get("/profile", verifyToken, user_controller.get_personal_profile);
 router.post("/posts", verifyToken, upload.single("img_file"), post_controller.create_post);
 
 // Protected route for editing blog
-router.put("/posts/:id", verifyToken, post_controller.edit_post);
+router.put("/posts/:id", verifyToken, upload.single("img_file"), post_controller.edit_post);
 
 // Protected route for deleting blog
 router.delete("/posts/:id", verifyToken, post_controller.delete_post);

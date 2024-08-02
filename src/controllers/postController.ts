@@ -99,8 +99,8 @@ exports.edit_post = [
 	body("read_time").isNumeric().toInt().escape(),
 	body("tags").isArray(),
 	body("content").isString().trim().notEmpty().escape(),
-	body("blog_img.src.name").isString().trim().escape(),
-	body("blog_img.src.link").isString().trim().escape(),
+	body("blog_img.src.name").trim().escape(),
+	body("blog_img.src.link").trim(),
 	body("published").isBoolean().toBoolean(),
 
 	asyncHandler(async (req: any, res: Response, next: NextFunction) => {
