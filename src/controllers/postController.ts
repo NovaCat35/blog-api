@@ -138,8 +138,18 @@ exports.edit_post = [
 
 			// Handle image file upload if a new file is provided
 			if (req.file) {
-				// Handle file upload to cloudinary
+				// Handle file upload to Cloudinary
 				const cloudinaryResult = await handleUpload(req.file.path);
+
+				// Delete the old image from Cloudinary
+				try {
+					await handleDelete(blogPost.blog_img.cloudinary_id);
+				} catch (error) {
+					console.error("Error deleting image from Cloudinary:", error);
+					return res.status(500).json({ error: "Error deleting old image from Cloudinary." });
+				}
+
+				// Update the blog post with the new image details
 				blogPost.blog_img.img_url = cloudinaryResult.secure_url;
 				blogPost.blog_img.cloudinary_id = cloudinaryResult.public_id;
 			}
